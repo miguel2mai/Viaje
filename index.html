@@ -1,0 +1,2665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShqipTour - Planificador de Viaje a Albania</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        albania: {
+                            red: '#E41E26',
+                            darkred: '#9B1116',
+                            blue: '#0E7490', // Riviera Teal
+                            sand: '#FDFBF7',
+                            mountain: '#065F46' // Alpine Green
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-16 md:pb-0">
+
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logotipo / Título -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="bg-albania-red text-white p-2 rounded-xl shadow-md flex items-center justify-center">
+                        <i class="fa-solid fa-eagle text-lg sm:text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-1.5">
+                            ShqipTour <span class="bg-teal-100 text-teal-800 text-[10px] px-2 py-0.5 rounded-full font-semibold">Albania 2026</span>
+                        </h1>
+                        <p class="text-[10px] text-slate-500 font-medium">Santander ✈ Tirana | 6 - 13 Ago</p>
+                    </div>
+                </div>
+
+                <!-- Botones del Header (Sincronización y Cuenta atrás) -->
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <!-- Botón Nube Sincronizar -->
+                    <button onclick="openSyncModal()" class="bg-teal-50 hover:bg-teal-100 text-teal-700 px-3 py-2 rounded-xl text-xs font-bold border border-teal-200/50 flex items-center gap-1.5 transition-all shadow-sm">
+                        <i class="fa-solid fa-cloud-arrow-up-down text-sm animate-pulse"></i>
+                        <span class="hidden sm:inline">Sincronizar móvil</span>
+                    </button>
+                    
+                    <div class="hidden md:flex items-center gap-4 bg-slate-50 border border-slate-100 p-1.5 rounded-xl text-sm">
+                        <span class="pl-3 font-semibold text-slate-700 flex items-center gap-2">
+                            <i class="fa-regular fa-calendar-days text-teal-600"></i>
+                            Despegue desde Santander
+                        </span>
+                        <span class="bg-white border border-slate-200 px-3 py-1 rounded-lg text-xs font-bold shadow-sm" id="days-countdown">
+                            Calculando...
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-1 flex flex-col md:flex-row gap-6">
+        
+        <!-- Sidebar de Navegación (Escritorio) -->
+        <aside class="hidden md:flex flex-col gap-2 w-64 shrink-0">
+            <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-1.5">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Menú Principal</p>
+                
+                <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                    <i class="fa-solid fa-chart-pie text-lg"></i> Dashboard
+                </button>
+                
+                <button onclick="switchTab('itinerary')" id="btn-tab-itinerary" class="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                    <i class="fa-solid fa-route text-lg"></i> Itinerario Diario
+                </button>
+                
+                <button onclick="switchTab('budget')" id="btn-tab-budget" class="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                    <i class="fa-solid fa-wallet text-lg"></i> Presupuesto y Gastos
+                </button>
+                
+                <button onclick="switchTab('packing')" id="btn-tab-packing" class="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                    <i class="fa-solid fa-suitcase text-lg"></i> Lista de Equipaje
+                </button>
+
+                <button onclick="switchTab('documents')" id="btn-tab-documents" class="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                    <i class="fa-solid fa-passport text-lg"></i> Documentación
+                </button>
+
+                <button onclick="switchTab('places')" id="btn-tab-places" class="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                    <i class="fa-solid fa-location-dot text-lg"></i> Pueblos y Sitios
+                </button>
+
+                <button onclick="switchTab('guide')" id="btn-tab-guide" class="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                    <i class="fa-solid fa-compass text-lg"></i> Guía y Vocabulario
+                </button>
+            </div>
+
+            <!-- Widget del Clima de Albania Simplificado -->
+            <div class="bg-gradient-to-br from-cyan-600 to-teal-700 text-white p-4 rounded-2xl shadow-sm flex flex-col justify-between h-40 relative overflow-hidden">
+                <i class="fa-solid fa-cloud-sun text-8xl absolute -right-4 -bottom-4 opacity-15"></i>
+                <div>
+                    <span class="text-xs bg-cyan-500/30 px-2 py-1 rounded-full font-bold">Temperatura Media Agosto</span>
+                    <h3 class="text-3xl font-bold mt-2 flex items-center gap-2">31°C <span class="text-sm font-normal">Tirana</span></h3>
+                </div>
+                <div class="text-xs opacity-90 flex justify-between items-center">
+                    <span>Mar Jónico / Adriático</span>
+                    <span class="font-bold flex items-center gap-1"><i class="fa-solid fa-sun text-amber-300"></i> Sol radiante</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenedor Principal de Vistas -->
+        <main class="flex-1 min-w-0">
+
+            <!-- VISTA DASHBOARD -->
+            <section id="view-dashboard" class="tab-view fade-in flex flex-col gap-6">
+                <!-- Banner de Bienvenida -->
+                <div class="relative bg-gradient-to-r from-slate-900 via-slate-800 to-teal-950 text-white p-6 sm:p-8 rounded-2xl shadow-md overflow-hidden">
+                    <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                    <div class="relative z-10 max-w-lg">
+                        <span class="bg-amber-500 text-slate-950 text-xs px-3 py-1 rounded-full font-extrabold tracking-wider uppercase">¡Mirë se vini në Shqipëri!</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold mt-3">Viaje del 6 al 13 de Agosto 2026</h2>
+                        <p class="text-slate-300 text-sm mt-2 leading-relaxed">
+                            Vuestro vuelo directo sale de Santander (SDR) rumbo a Tirana (TIA). Todo listo para explorar calas salvajes en el sur, valles alpinos y castillos otomanos de cuento.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tarjetas de Resumen Rápido -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+                        <div class="bg-emerald-50 text-emerald-600 p-3 rounded-xl">
+                            <i class="fa-solid fa-piggy-bank text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Gastado Total</p>
+                            <h3 class="text-xl font-bold text-slate-800" id="dash-spent">0.00 €</h3>
+                            <p class="text-xs text-slate-500" id="dash-spent-lek">~0 Leks</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+                        <div class="bg-cyan-50 text-cyan-600 p-3 rounded-xl">
+                            <i class="fa-solid fa-compass-drafting text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Duración de la Ruta</p>
+                            <h3 class="text-xl font-bold text-slate-800" id="dash-stops">8 Días</h3>
+                            <p class="text-xs text-slate-500">Santander ✈ Tirana</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+                        <div class="bg-amber-50 text-amber-600 p-3 rounded-xl">
+                            <i class="fa-solid fa-list-check text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Equipaje Empacado</p>
+                            <h3 class="text-xl font-bold text-slate-800" id="dash-packing-progress">0% Listo</h3>
+                            <p class="text-xs text-slate-500">Lista interactiva</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mapa interactivo y Plan Rápido del día -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Mapa Ilustrado de Albania (SVG) -->
+                    <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm lg:col-span-7 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-950 flex items-center gap-2 mb-1">
+                                <i class="fa-solid fa-map-location-dot text-teal-600"></i>
+                                Mapa de la Ruta
+                            </h3>
+                            <p class="text-xs text-slate-500 mb-4">Haz clic en los puntos clave de vuestro viaje del 6 al 13 de agosto.</p>
+                        </div>
+                        
+                        <div class="relative w-full aspect-[4/5] bg-sky-50 rounded-xl overflow-hidden flex items-center justify-center p-2 border border-slate-100">
+                            <!-- SVG Mapa conceptual de Albania -->
+                            <svg class="w-full h-full max-h-[380px]" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 10 100 Q 60 120 40 200 T 50 350 T 80 480" stroke="#bae6fd" stroke-width="4" stroke-dasharray="5 5" fill="none"/>
+                                <text x="15" y="240" fill="#0369a1" font-size="10" font-weight="bold" transform="rotate(-90 15 240)">MAR ADRIÁTICO</text>
+                                <text x="15" y="400" fill="#0369a1" font-size="10" font-weight="bold" transform="rotate(-90 15 400)">MAR JÓNICO</text>
+
+                                <path d="M 130 30 C 170 20, 240 40, 240 70 C 240 100, 270 120, 280 150 C 290 180, 310 200, 330 220 C 350 240, 320 280, 300 310 C 280 340, 290 380, 290 410 C 290 440, 270 460, 250 480 C 230 490, 200 480, 180 470 C 170 450, 150 440, 140 410 C 130 380, 100 360, 90 330 C 80 300, 110 270, 110 240 C 110 210, 100 180, 100 150 C 100 120, 130 100, 130 70 Z" fill="#fef08a" opacity="0.4" stroke="#eab308" stroke-width="2" stroke-linecap="round"/>
+                                
+                                <path d="M 180 150 L 190 230 L 175 280 L 155 350 L 140 430 L 165 440 L 175 280" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+
+                                <!-- Tirana (Capital) -->
+                                <g class="cursor-pointer group" onclick="showMapPoint('Tirana (Llegada SDR)', 'Vuestro vuelo de Wizz Air aterriza aquí en el aeropuerto de Tirana (TIA) a las 00:10 del viernes 7 de agosto.')">
+                                    <circle cx="180" cy="150" r="7" fill="#E41E26" class="animate-ping" opacity="0.6"/>
+                                    <circle cx="180" cy="150" r="5" fill="#E41E26"/>
+                                    <text x="190" y="154" fill="#1e293b" font-size="11" font-weight="bold">Tirana</text>
+                                </g>
+
+                                <!-- Krujë -->
+                                <g class="cursor-pointer group" onclick="showMapPoint('Krujë', 'Ciudad del héroe Skanderbeg, ideal para visitar el 7 de agosto antes de bajar a Berat.')">
+                                    <circle cx="175" cy="115" r="4" fill="#0E7490"/>
+                                    <text x="185" y="119" fill="#1e293b" font-size="10">Krujë</text>
+                                </g>
+
+                                <!-- Berat -->
+                                <g class="cursor-pointer group" onclick="showMapPoint('Berat', 'La mítica ciudad de las mil ventanas. Increíbles casas otomanas tradicionales, vuestra parada el 7-8 de agosto.')">
+                                    <circle cx="190" cy="230" r="5" fill="#0E7490"/>
+                                    <text x="202" y="234" fill="#1e293b" font-size="11" font-weight="bold">Berat</text>
+                                </g>
+
+                                <!-- Gjirokastër -->
+                                <g class="cursor-pointer group" onclick="showMapPoint('Gjirokastër', 'Parada el 8-9 de agosto. Ciudad museo de piedra con un castillo majestuoso.')">
+                                    <circle cx="175" cy="280" r="5" fill="#0E7490"/>
+                                    <text x="187" y="284" fill="#1e293b" font-size="11" font-weight="bold">Gjirokastër</text>
+                                </g>
+
+                                <!-- Sarandë / Ksamil -->
+                                <g class="cursor-pointer group" onclick="showMapPoint('Sarandë y Ksamil', 'Parada costera del 9 al 11 de agosto. Playas de arena blanca y agua turquesa frente a Corfú.')">
+                                    <circle cx="140" cy="430" r="6" fill="#0E7490"/>
+                                    <text x="152" y="434" fill="#1e293b" font-size="11" font-weight="bold">Sarandë/Ksamil</text>
+                                </g>
+
+                                <!-- Himarë / Riviera -->
+                                <g class="cursor-pointer group" onclick="showMapPoint('Himarë', 'Visita costera el 11 de agosto, perfecta para descubrir la increíble playa salvaje de Gjipe.')">
+                                    <circle cx="155" cy="350" r="5" fill="#0E7490"/>
+                                    <text x="165" y="354" fill="#1e293b" font-size="10">Himarë</text>
+                                </g>
+                            </svg>
+
+                            <div id="map-info-box" class="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-sm border border-slate-200 p-3 rounded-lg shadow-md transition-all">
+                                <h4 class="text-xs font-bold text-teal-800 uppercase tracking-wide">Punto del Mapa</h4>
+                                <h5 id="map-point-title" class="text-sm font-extrabold text-slate-800">Tirana (Aeropuerto TIA)</h5>
+                                <p id="map-point-desc" class="text-xs text-slate-600 mt-1 leading-snug">
+                                    Haz clic sobre los puntos del mapa para ubicar vuestra ruta prevista entre el 6 y el 13 de agosto.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enlace rápido y Clima / Consejos rápidos -->
+                    <div class="lg:col-span-5 flex flex-col gap-6">
+                        <!-- Consejos rápidos -->
+                        <div class="bg-amber-50 border border-amber-100 p-5 rounded-2xl">
+                            <h3 class="font-bold text-amber-800 flex items-center gap-2 mb-2 text-sm sm:text-base">
+                                <i class="fa-solid fa-lightbulb"></i>
+                                Info de Vuelo Santander -> Tirana
+                            </h3>
+                            <ul class="text-xs text-amber-900/90 flex flex-col gap-2.5">
+                                <li class="flex gap-2">
+                                    <span class="font-extrabold">✈ Salida:</span>
+                                    <span>Jueves, 6 Ago - 21:10 desde Santander (SDR).</span>
+                                </li>
+                                <li class="flex gap-2">
+                                    <span class="font-extrabold">🛬 Llegada:</span>
+                                    <span>Viernes, 7 Ago - 00:10 en Tirana (TIA). Vuelo de 3h.</span>
+                                </li>
+                                <li class="flex gap-2">
+                                    <span class="font-extrabold">🔑 Localizador:</span>
+                                    <span class="font-mono bg-white/60 px-1 py-0.5 rounded text-slate-900 font-bold">DJ6E2P</span>
+                                </li>
+                                <li class="flex gap-2">
+                                    <span class="font-extrabold">💼 Aerolínea:</span>
+                                    <span>Wizz Air - Vuelo W45160.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Estado del día rápido -->
+                        <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm">
+                            <h3 class="font-bold text-slate-900 flex items-center justify-between mb-3 text-sm sm:text-base">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-bell text-albania-red"></i> Check-in / Recordatorios</span>
+                                <span class="text-xs bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full font-bold">Imprescindible</span>
+                            </h3>
+                            <div class="flex flex-col gap-3">
+                                <label class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" id="check-docs" class="mt-1 rounded border-slate-300 text-teal-600 focus:ring-teal-500">
+                                    <div>
+                                        <p class="text-xs font-semibold text-slate-800">Revisar vigencia del Pasaporte / DNI</p>
+                                        <p class="text-[10px] text-slate-500">Mínimo 3 meses desde la fecha de salida.</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" id="check-insurance" class="mt-1 rounded border-slate-300 text-teal-600 focus:ring-teal-500">
+                                    <div>
+                                        <p class="text-xs font-semibold text-slate-800">Contratar Seguro de Viaje</p>
+                                        <p class="text-[10px] text-slate-500">Albania no pertenece a la UE (Tarjeta Sanitaria Europea no válida).</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" id="check-card" class="mt-1 rounded border-slate-300 text-teal-600 focus:ring-teal-500">
+                                    <div>
+                                        <p class="text-xs font-semibold text-slate-800">Preparar Tarjetas Revolut / N26</p>
+                                        <p class="text-[10px] text-slate-500">Útiles para sacar dinero (Leks) de cajeros sin comisión abusiva.</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA ITINERARIO (EDITABLE) -->
+            <section id="view-itinerary" class="tab-view fade-in hidden flex flex-col gap-6">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-teal-600"></i>
+                            Itinerario de Viaje (6 - 13 de Agosto)
+                        </h2>
+                        <p class="text-xs text-slate-500">Visualiza y edita las actividades previstas de cada día de vuestra ruta albanesa.</p>
+                    </div>
+                    <button onclick="openAddDayModal()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md shadow-teal-600/15 flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Añadir Nuevo Día
+                    </button>
+                </div>
+
+                <!-- Línea de Tiempo del Itinerario -->
+                <div class="flex flex-col gap-4" id="itinerary-timeline">
+                    <!-- Los días se renderizarán aquí mediante JavaScript -->
+                </div>
+            </section>
+
+            <!-- VISTA PRESUPUESTO (EDITABLE) -->
+            <section id="view-budget" class="tab-view fade-in hidden flex flex-col gap-6">
+                <!-- Panel de Gestión Presupuestaria -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Entrada de Gastos -->
+                    <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm lg:col-span-1">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-money-bill-transfer text-emerald-600"></i>
+                            Registrar Gasto
+                        </h3>
+                        <form id="expense-form" onsubmit="addExpense(event)" class="flex flex-col gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Concepto / Descripción</label>
+                                <input type="text" id="expense-desc" required placeholder="Ej. Alquiler coche, Cena Ksamil" class="w-full text-sm bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-teal-500 focus:bg-white transition-all">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Cantidad (€)</label>
+                                    <input type="number" step="0.01" id="expense-amount" required placeholder="0.00" class="w-full text-sm bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-teal-500 focus:bg-white transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Categoría</label>
+                                    <select id="expense-category" class="w-full text-sm bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-teal-500 focus:bg-white transition-all">
+                                        <option value="Alojamiento">🏨 Alojamiento</option>
+                                        <option value="Comida">🍽️ Comida/Bebida</option>
+                                        <option value="Transporte">🚗 Transporte</option>
+                                        <option value="Actividades">🎟️ Actividades</option>
+                                        <option value="Vuelos">✈️ Vuelos</option>
+                                        <option value="Otros">📦 Otros</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-3 rounded-xl transition-all shadow-md shadow-emerald-600/10 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Añadir Gasto
+                            </button>
+                        </form>
+
+                        <!-- Conversor de Divisa -->
+                        <div class="mt-6 pt-6 border-t border-slate-100">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Conversor Rápido (Lek / EUR)</h4>
+                            <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col gap-3">
+                                <div class="flex items-center gap-2 justify-between">
+                                    <span class="text-xs font-bold text-slate-600">Tasa oficial de hoy:</span>
+                                    <span class="text-xs font-extrabold text-teal-800" id="current-exchange-rate-label">1 € = 95.45 ALL</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="relative">
+                                        <input type="number" id="conv-eur" oninput="convertDivisa('eur')" placeholder="EUR" class="w-full text-xs p-2 rounded-lg border border-slate-200 pr-6">
+                                        <span class="absolute right-2 top-2 text-[10px] text-slate-400 font-bold">€</span>
+                                    </div>
+                                    <div class="relative">
+                                        <input type="number" id="conv-all" oninput="convertDivisa('all')" placeholder="ALL" class="w-full text-xs p-2 rounded-lg border border-slate-200 pr-8">
+                                        <span class="absolute right-2 top-2 text-[10px] text-slate-400 font-bold">Lek</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráficos y Listado -->
+                    <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm lg:col-span-2 flex flex-col gap-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-column text-emerald-600"></i>
+                                Control Presupuestario
+                            </h3>
+                            <p class="text-xs text-slate-500">Visualiza, añade o edita tus gastos. Mantén un presupuesto saludable.</p>
+                        </div>
+
+                        <!-- Barra visual de gasto -->
+                        <div id="budget-progress-container" class="flex flex-col gap-2">
+                            <div class="flex justify-between items-center text-xs font-bold">
+                                <span class="text-slate-600">Presupuesto Recomendado: <span class="font-extrabold text-slate-800">1000.00 €</span></span>
+                                <span id="budget-percentage" class="text-emerald-600">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                                <div id="budget-bar" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de Gastos -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead>
+                                    <tr class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                                        <th class="pb-3">Categoría</th>
+                                        <th class="pb-3">Concepto</th>
+                                        <th class="pb-3 text-right">Cantidad</th>
+                                        <th class="pb-3 text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expenses-tbody" class="divide-y divide-slate-100">
+                                    <!-- Insertado dinámicamente -->
+                                </tbody>
+                            </table>
+                            <div id="no-expenses-msg" class="text-center py-6 text-xs text-slate-400 hidden">
+                                <i class="fa-regular fa-face-meh text-3xl mb-2 block"></i>
+                                No hay gastos registrados aún. ¡Registra el primero!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA EQUIPAJE (EDITABLE) -->
+            <section id="view-packing" class="tab-view fade-in hidden flex flex-col gap-6">
+                <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm flex flex-col gap-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-clipboard-list text-cyan-600"></i>
+                                Lista de Equipaje Inteligente (Totalmente Editable)
+                            </h2>
+                            <p class="text-xs text-slate-500">Organiza tu equipaje. Puedes cambiar de nombre y categoría cualquier artículo.</p>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <input type="text" id="new-packing-item" placeholder="Ej. Escarpines" class="text-xs bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl focus:outline-none focus:border-cyan-500">
+                            <button onclick="addPackingItem()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition-all">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Categorías de Equipaje -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Categoría 1: Documentos y Dinero -->
+                        <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-100">
+                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-between">
+                                <span>📋 Imprescindible</span>
+                                <span class="bg-red-100 text-red-800 text-[9px] px-1.5 py-0.5 rounded font-extrabold">Vital</span>
+                            </h3>
+                            <div class="flex flex-col gap-2" id="packing-vital">
+                                <!-- Elementos dinámicos -->
+                            </div>
+                        </div>
+
+                        <!-- Categoría 2: Ropa y Calzado -->
+                        <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-100">
+                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-between">
+                                <span>👕 Ropa y Calzado</span>
+                                <span class="bg-blue-100 text-blue-800 text-[9px] px-1.5 py-0.5 rounded font-extrabold">Playa / Trekking</span>
+                            </h3>
+                            <div class="flex flex-col gap-2" id="packing-clothing">
+                                <!-- Elementos dinámicos -->
+                            </div>
+                        </div>
+
+                        <!-- Categoría 3: Botiquín y Electrónica -->
+                        <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-100">
+                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-between">
+                                <span>🔌 Botiquín y Tech</span>
+                                <span class="bg-amber-100 text-amber-800 text-[9px] px-1.5 py-0.5 rounded font-extrabold">Extras</span>
+                            </h3>
+                            <div class="flex flex-col gap-2" id="packing-extras">
+                                <!-- Elementos dinámicos -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA GUÍA / VOCABULARIO -->
+            <section id="view-guide" class="tab-view fade-in hidden flex flex-col gap-6">
+                <!-- Tarjeta de Frases Útiles con Conversión de Voz -->
+                <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                    <div class="mb-4">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-volume-high text-teal-600"></i>
+                            Diccionario Rápido Shqip (Albanés)
+                        </h2>
+                        <p class="text-xs text-slate-500">Haz clic en el icono del altavoz para escuchar la pronunciación asistida por el navegador.</p>
+                    </div>
+
+                    <!-- Grid de Palabras -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="phrases-grid">
+                        <!-- Insertado dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Consejos Generales de Viaje -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm">
+                        <h3 class="font-extrabold text-slate-950 flex items-center gap-2 mb-3 text-sm sm:text-base">
+                            <i class="fa-solid fa-utensils text-emerald-600"></i> Comida recomendada
+                        </h3>
+                        <div class="flex flex-col gap-3 text-xs leading-relaxed text-slate-600">
+                            <p>🍔 <span class="font-bold text-slate-800">Byrek:</span> El rey de la comida callejera. Masa filo rellena de queso, espinacas o carne picada por apenas 1€.</p>
+                            <p>🍲 <span class="font-bold text-slate-800">Tavë Kosi:</span> El plato nacional albanés. Cordero horneado con arroz y una deliciosa salsa de yogur y huevo.</p>
+                            <p>🐟 <span class="font-bold text-slate-800">Pescado fresco:</span> Disfrutadlo en el sur (Sarandë, Ksamil, Himarë) a precios muy competitivos.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm">
+                        <h3 class="font-extrabold text-slate-950 flex items-center gap-2 mb-3 text-sm sm:text-base">
+                            <i class="fa-solid fa-mobile-screen text-teal-600"></i> SIM móvil e Internet
+                        </h3>
+                        <div class="flex flex-col gap-3 text-xs leading-relaxed text-slate-600">
+                            <p>📱 <span class="font-bold text-slate-800">Vodafone Albania:</span> Al salir del aeropuerto de Tirana veréis stands. Ofrecen tarjetas SIM de turista por unos 15-20€ con muchos gigas.</p>
+                            <p>🌍 <span class="font-bold text-slate-800">eSIM virtual:</span> Si tu móvil lo permite, contratar Airalo o Holafly antes de salir os evitará hacer colas al llegar.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA DOCUMENTACIÓN Y RESERVAS -->
+            <section id="view-documents" class="tab-view fade-in hidden flex flex-col gap-6">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-passport text-teal-600"></i>
+                            Documentación y Reservas
+                        </h2>
+                        <p class="text-xs text-slate-500">Mantén todos tus códigos, confirmaciones y pólizas listos para vuestra aventura en Albania.</p>
+                    </div>
+                    <button onclick="saveAllDocuments()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md shadow-teal-600/15 flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Todos los Cambios
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- Tarjeta 1: Billetes de Avión -->
+                    <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm border-t-4 border-t-sky-500 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-plane text-sky-500 text-lg"></i> Billetes de Avión (Ida/Vuelta)
+                            </h3>
+                            <span class="text-[10px] bg-sky-50 text-sky-700 font-extrabold px-2 py-0.5 rounded-full">Vuelos</span>
+                        </div>
+                        
+                        <div class="bg-slate-50 p-4 rounded-xl flex flex-col gap-3">
+                            <p class="text-xs font-bold text-slate-700 border-b border-slate-200 pb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-plane-departure text-sky-600"></i> Vuelo de Ida (Santander -> Tirana)
+                            </p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Aerolínea / Nº Vuelo</label>
+                                    <input type="text" id="doc-flight-out-airline" class="w-full text-xs p-2 rounded-lg border border-slate-200 mt-1">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Código Reserva (PNR)</label>
+                                    <input type="text" id="doc-flight-out-pnr" class="w-full text-xs p-2 rounded-lg border border-slate-200 mt-1 uppercase font-mono">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Fecha y Hora</label>
+                                    <input type="text" id="doc-flight-out-datetime" class="w-full text-xs p-2 rounded-lg border border-slate-200 mt-1">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Trayecto / Duración</label>
+                                    <input type="text" id="doc-flight-out-seats" class="w-full text-xs p-2 rounded-lg border border-slate-200 mt-1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-xl flex flex-col gap-3">
+                            <p class="text-xs font-bold text-slate-700 border-b border-slate-200 pb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-plane-arrival text-sky-600"></i> Vuelo de Vuelta (Tirana -> Santander)
+                            </p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Aerolínea / Nº Vuelo</label>
+                                    <input type="text" id="doc-flight-ret-airline" class="w-full text-xs p-2 rounded-lg border border-slate-200 mt-1">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Código Reserva (PNR)</label>
+                                    <input type="text" id="doc-flight-ret-pnr" class="w-full text-xs p-2 rounded-lg border border-slate-200 mt-1 uppercase font-mono">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Fecha y Hora</label>
+                                    <input type="text" id="doc-flight-ret-datetime" class="w-full text-xs p-2 rounded-lg border border-slate-200 mt-1">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase">Terminal / Asientos</label>
+                                    <input type="text" id="doc-flight-ret-seats" class="w-full text-xs p-2 rounded-lg border border-slate-200 mt-1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 2: Seguro de Viaje -->
+                    <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm border-t-4 border-t-emerald-500 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-emerald-500 text-lg"></i> Seguro de Viaje
+                            </h3>
+                            <span class="text-[10px] bg-emerald-50 text-emerald-700 font-extrabold px-2 py-0.5 rounded-full">Asistencia Médica</span>
+                        </div>
+
+                        <div class="bg-emerald-50/50 border border-emerald-100 p-3 rounded-xl text-xs text-emerald-900 leading-relaxed">
+                            <i class="fa-solid fa-circle-info text-emerald-600"></i> <strong>Recuerda:</strong> Albania no pertenece a la UE. La Tarjeta Sanitaria Europea <strong>no sirve</strong>. Contratar seguro médico privado es altamente recomendado.
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Aseguradora</label>
+                                <input type="text" id="doc-ins-company" placeholder="Ej. IATI, Mondo, Chapka" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase font-mono">Nº de Póliza</label>
+                                <input type="text" id="doc-ins-policy" placeholder="Ej. POL-987654" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1 font-mono">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Teléfono de Emergencia</label>
+                                <input type="text" id="doc-ins-phone" placeholder="Ej. +34 91 123 45 67" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1 font-mono text-rose-600 font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Estado de Cobertura</label>
+                                <select id="doc-ins-status" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1 bg-white">
+                                    <option value="No Contratado">❌ No Contratado</option>
+                                    <option value="Contratado y Activo">✅ Contratado y Activo</option>
+                                    <option value="En trámite">⏳ En trámite</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase">Detalles adicionales / Coberturas incluidas</label>
+                            <textarea id="doc-ins-notes" rows="2" placeholder="Ej. Incluye asistencia médica internacional." class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 3: Reserva de Hoteles -->
+                    <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm border-t-4 border-t-teal-600 flex flex-col gap-4 lg:col-span-2">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-hotel text-teal-600 text-lg"></i> Reservas de Alojamientos
+                            </h3>
+                            <button onclick="addDocHotelRow()" class="text-xs bg-teal-50 hover:bg-teal-100 text-teal-700 font-extrabold px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-plus"></i> Añadir Reserva
+                            </button>
+                        </div>
+
+                        <!-- Tabla interactiva de hoteles -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs min-w-[600px]">
+                                <thead>
+                                    <tr class="font-bold text-slate-400 uppercase border-b border-slate-100 pb-2">
+                                        <th class="pb-2 w-1/4">Hotel / Destino</th>
+                                        <th class="pb-2 w-1/4">Fechas (Check In/Out)</th>
+                                        <th class="pb-2 w-1/6 font-mono">Cód. Confirmación</th>
+                                        <th class="pb-2 w-1/6">Precio / Pago</th>
+                                        <th class="pb-2 w-1/12 text-right">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="doc-hotels-tbody" class="divide-y divide-slate-100">
+                                    <!-- Insertado dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 4: Coche de Alquiler -->
+                    <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm border-t-4 border-t-indigo-500 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-car text-indigo-500 text-lg"></i> Reserva de Coche de Alquiler
+                            </h3>
+                            <span class="text-[10px] bg-indigo-50 text-indigo-700 font-extrabold px-2 py-0.5 rounded-full">Transporte</span>
+                        </div>
+
+                        <div class="bg-amber-50 border border-amber-100 p-3 rounded-xl text-xs text-amber-900 leading-relaxed">
+                            <i class="fa-solid fa-wallet text-amber-600"></i> <strong>Nota Albania:</strong> Muchas empresas de alquiler locales permiten el pago y depósito de fianza directamente en efectivo (€).
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Compañía / Plataforma</label>
+                                <input type="text" id="doc-car-company" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Modelo / Categoría</label>
+                                <input type="text" id="doc-car-model" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Recogida (Lugar / Hora)</label>
+                                <input type="text" id="doc-car-pickup" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Devolución (Lugar / Hora)</label>
+                                <input type="text" id="doc-car-dropoff" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-2">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Localizador / Reserva</label>
+                                <input type="text" id="doc-car-pnr" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1 uppercase font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Precio Total (€)</label>
+                                <input type="text" id="doc-car-price" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase">Condiciones de Fianza / Seguro</label>
+                            <input type="text" id="doc-car-deposit" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta 5: E-SIM e Internet -->
+                    <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm border-t-4 border-t-purple-500 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-sim-card text-purple-500 text-lg"></i> Conectividad E-SIM
+                            </h3>
+                            <span class="text-[10px] bg-purple-50 text-purple-700 font-extrabold px-2 py-0.5 rounded-full">Internet Móvil</span>
+                        </div>
+
+                        <div class="bg-purple-50/50 border border-purple-100 p-3 rounded-xl text-xs text-purple-900 leading-relaxed">
+                            <i class="fa-solid fa-wifi text-purple-600"></i> Albania cuenta con excelentes ofertas de eSIM (Airalo, Holafly) pero también podéis comprar una tarjeta física local en el aeropuerto.
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Proveedor / Operador</label>
+                                <input type="text" id="doc-sim-provider" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Plan Contratado / Datos</label>
+                                <input type="text" id="doc-sim-plan" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Estado de Compra</label>
+                                <select id="doc-sim-status" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1 bg-white">
+                                    <option value="No Comprado">❌ No Comprada aún</option>
+                                    <option value="Comprada e Instalada">✅ Comprada e Instalada</option>
+                                    <option value="Comprada (Pendiente Instalar)">⏳ Comprada (Por instalar)</option>
+                                    <option value="Comprar en destino (Física)">🎒 Comprar física al llegar</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Precio / Enlace QR</label>
+                                <input type="text" id="doc-sim-price" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase">Pasos clave para la activación en Albania</label>
+                            <textarea id="doc-sim-steps" rows="2" class="w-full text-xs p-2.5 rounded-lg border border-slate-200 mt-1"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- VISTA PUEBLOS Y SITIOS (EDITABLES) -->
+            <section id="view-places" class="tab-view fade-in hidden flex flex-col gap-6">
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div class="p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-slate-100">
+                        <div>
+                            <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-map-pin text-teal-600"></i>
+                                Explorador de Albania
+                            </h2>
+                            <p class="text-xs text-slate-500">Explorad pueblos medievales, cascadas, playas jónicas, restaurantes típicos y locales con encanto.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Sub-pestañas de navegación -->
+                    <div class="flex bg-slate-50 p-1">
+                        <button onclick="switchPlacesSubTab('pueblos')" id="btn-sub-pueblos" class="flex-1 py-3 text-xs sm:text-sm font-bold text-center rounded-xl transition-all flex items-center justify-center gap-2 text-teal-700 bg-white shadow-sm border border-slate-200/50">
+                            <i class="fa-solid fa-house-chimney"></i> 🏡 Pueblos que Ver
+                        </button>
+                        <button onclick="switchPlacesSubTab('sitios')" id="btn-sub-sitios" class="flex-1 py-3 text-xs sm:text-sm font-bold text-center rounded-xl transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800">
+                            <i class="fa-solid fa-location-dot"></i> 📍 Sitios y Locales
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SUB-PESTAÑA PUEBLOS -->
+                <div id="places-sub-pueblos" class="flex flex-col gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="towns-grid-cards">
+                        <!-- Renderizado dinámico desde JS -->
+                    </div>
+
+                    <!-- Formulario para Añadir Pueblo -->
+                    <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                        <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-plus text-teal-600"></i> ¿Habéis descubierto otro pueblo? ¡Apúntalo!
+                        </h3>
+                        <form id="custom-town-form" onsubmit="addCustomTown(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nombre del Pueblo / Ciudad</label>
+                                <input type="text" id="add-town-name" required placeholder="Ej. Valbona, Himarë" class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Entorno principal</label>
+                                <select id="add-town-tag" class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500 bg-white">
+                                    <option value="Montaña">⛰️ Montaña</option>
+                                    <option value="Costa">🌊 Costa</option>
+                                    <option value="Histórico">🏛️ Histórico</option>
+                                    <option value="Naturaleza">🌲 Naturaleza / Valle</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Descripción corta</label>
+                                <input type="text" id="add-town-desc" required placeholder="Ej. Precioso pueblo alpino..." class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">URL de Foto (Opcional)</label>
+                                <input type="url" id="add-town-image" placeholder="Ej. https://images.unsplash.com/..." class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Lugares destacados (Separados por comas)</label>
+                                <input type="text" id="add-town-places" placeholder="Ej. Castillo, Bazar de Madera" class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500">
+                            </div>
+                            <div class="sm:col-span-2 flex justify-end">
+                                <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-md shadow-teal-600/10 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Guardar Pueblo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SUB-PESTAÑA SITIOS -->
+                <div id="places-sub-sitios" class="hidden flex flex-col gap-6">
+                    <!-- Filtros por categoría -->
+                    <div class="bg-white border border-slate-100 p-3 rounded-2xl shadow-sm flex items-center gap-1.5 overflow-x-auto custom-scroll shrink-0">
+                        <button onclick="filterPlaces('Todos')" id="filter-all" class="text-xs font-bold px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-teal-600 text-white shadow-sm">Todos</button>
+                        <button onclick="filterPlaces('Restaurantes')" id="filter-rest" class="text-xs font-bold px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-slate-50 text-slate-600 hover:bg-slate-100">🍽️ Restaurantes</button>
+                        <button onclick="filterPlaces('Ocio')" id="filter-ocio" class="text-xs font-bold px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-slate-50 text-slate-600 hover:bg-slate-100">🥂 Ocio</button>
+                        <button onclick="filterPlaces('Excursiones')" id="filter-excur" class="text-xs font-bold px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-slate-50 text-slate-600 hover:bg-slate-100">🎒 Excursiones</button>
+                        <button onclick="filterPlaces('Cafeterías')" id="filter-cafes" class="text-xs font-bold px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-slate-50 text-slate-600 hover:bg-slate-100">☕ Cafeterías</button>
+                        <button onclick="filterPlaces('Supermercados')" id="filter-super" class="text-xs font-bold px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-slate-50 text-slate-600 hover:bg-slate-100">🛒 Súper</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="places-grid">
+                        <!-- Se renderiza dinámicamente -->
+                    </div>
+
+                    <!-- Formulario para Añadir Sitio -->
+                    <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm">
+                        <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-plus text-teal-600"></i> ¿Habéis descubierto otro sitio? ¡Apúntalo!
+                        </h3>
+                        <form id="custom-place-form" onsubmit="addCustomPlace(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nombre del Sitio</label>
+                                <input type="text" id="add-place-name" required placeholder="Ej. Bar Sunset Ksamil" class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Ubicación / Población</label>
+                                <input type="text" id="add-place-loc" required placeholder="Ej. Tirana, Himarë" class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Categoría</label>
+                                <select id="add-place-cat" class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500 bg-white">
+                                    <option value="Restaurantes">🍽️ Restaurantes</option>
+                                    <option value="Ocio">🥂 Ocio</option>
+                                    <option value="Excursiones">🎒 Excursiones</option>
+                                    <option value="Cafeterías">☕ Cafeterías</option>
+                                    <option value="Supermercados">🛒 Supermercados</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Valoración</label>
+                                <select id="add-place-rating" class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500 bg-white">
+                                    <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+                                    <option value="4">⭐⭐⭐⭐ Muy Bueno</option>
+                                    <option value="3">⭐⭐⭐ Normal</option>
+                                    <option value="2">⭐⭐ Regular</option>
+                                    <option value="1">⭐ Evitar</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Notas, precios o plato recomendado</label>
+                                <textarea id="add-place-note" rows="2" placeholder="Ej. El mejor ceviche por 8€..." class="w-full text-xs bg-slate-50 border border-slate-200 p-2.5 rounded-lg focus:outline-none focus:border-teal-500"></textarea>
+                            </div>
+                            <div class="sm:col-span-2 flex justify-end">
+                                <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-md shadow-teal-600/10 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Guardar Recomendación
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Menú Móvil Adaptado -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2 flex justify-around items-center z-40 shadow-lg">
+        <button onclick="switchTab('dashboard')" id="btn-m-dashboard" class="flex flex-col items-center gap-0.5 text-slate-500 active:text-teal-600">
+            <i class="fa-solid fa-chart-pie text-lg"></i>
+            <span class="text-[9px] font-bold">Inicio</span>
+        </button>
+        <button onclick="switchTab('itinerary')" id="btn-m-itinerary" class="flex flex-col items-center gap-0.5 text-slate-500 active:text-teal-600">
+            <i class="fa-solid fa-route text-lg"></i>
+            <span class="text-[9px] font-bold">Ruta</span>
+        </button>
+        <button onclick="switchTab('budget')" id="btn-m-budget" class="flex flex-col items-center gap-0.5 text-slate-500 active:text-teal-600">
+            <i class="fa-solid fa-wallet text-lg"></i>
+            <span class="text-[9px] font-bold">Gastos</span>
+        </button>
+        <button onclick="switchTab('packing')" id="btn-m-packing" class="flex flex-col items-center gap-0.5 text-slate-500 active:text-teal-600">
+            <i class="fa-solid fa-suitcase text-lg"></i>
+            <span class="text-[9px] font-bold">Mochila</span>
+        </button>
+        <button onclick="switchTab('documents')" id="btn-m-documents" class="flex flex-col items-center gap-0.5 text-slate-500 active:text-teal-600">
+            <i class="fa-solid fa-passport text-lg"></i>
+            <span class="text-[9px] font-bold">Docs</span>
+        </button>
+        <button onclick="switchTab('places')" id="btn-m-places" class="flex flex-col items-center gap-0.5 text-slate-500 active:text-teal-600">
+            <i class="fa-solid fa-location-dot text-lg"></i>
+            <span class="text-[9px] font-bold">Sitios</span>
+        </button>
+        <button onclick="switchTab('guide')" id="btn-m-guide" class="flex flex-col items-center gap-0.5 text-slate-500 active:text-teal-600">
+            <i class="fa-solid fa-compass text-lg"></i>
+            <span class="text-[9px] font-bold">Guía</span>
+        </button>
+    </nav>
+
+    <div id="toast-container" class="fixed bottom-20 md:bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <!-- MODAL AÑADIR DÍA -->
+    <div id="add-day-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl flex flex-col gap-4 animate-scaleUp">
+            <h3 class="text-lg font-bold text-slate-900">Añadir Nuevo Día al Itinerario</h3>
+            <div class="flex flex-col gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Título / Destino Principal</label>
+                    <input type="text" id="modal-day-title" placeholder="Ej. Día 9: Excursión adicional" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Actividades / Detalles</label>
+                    <textarea id="modal-day-activities" rows="3" placeholder="Pasear, visitar lugares..." class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Alojamiento Previsto</label>
+                    <input type="text" id="modal-day-hotel" placeholder="Ej. Hotel Tirana Center" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-2">
+                <button onclick="closeAddDayModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-all">Cancelar</button>
+                <button onclick="saveNewDay()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md">Añadir Día</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR DÍA (ITINERARIO) -->
+    <div id="edit-day-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl flex flex-col gap-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-route text-teal-600"></i> Editar Día del Itinerario
+            </h3>
+            <div class="flex flex-col gap-3">
+                <input type="hidden" id="edit-day-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Título / Destino Principal</label>
+                    <input type="text" id="edit-day-title" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Actividades / Detalles</label>
+                    <textarea id="edit-day-activities" rows="4" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Alojamiento Previsto</label>
+                    <input type="text" id="edit-day-hotel" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-2">
+                <button onclick="closeEditDayModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-all">Cancelar</button>
+                <button onclick="saveEditedDay()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR GASTO -->
+    <div id="edit-expense-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl flex flex-col gap-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-money-bill-transfer text-emerald-600"></i> Editar Registro de Gasto
+            </h3>
+            <div class="flex flex-col gap-3">
+                <input type="hidden" id="edit-expense-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Concepto / Descripción</label>
+                    <input type="text" id="edit-expense-desc" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Cantidad (€)</label>
+                        <input type="number" step="0.01" id="edit-expense-amount" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Categoría</label>
+                        <select id="edit-expense-category" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500 bg-white">
+                            <option value="Alojamiento">🏨 Alojamiento</option>
+                            <option value="Comida">🍽️ Comida/Bebida</option>
+                            <option value="Transporte">🚗 Transporte</option>
+                            <option value="Actividades">🎟️ Actividades</option>
+                            <option value="Vuelos">✈️ Vuelos</option>
+                            <option value="Otros">📦 Otros</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-2">
+                <button onclick="closeEditExpenseModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-all">Cancelar</button>
+                <button onclick="saveEditedExpense()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR ARTÍCULO DE EQUIPAJE -->
+    <div id="edit-packing-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl flex flex-col gap-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-suitcase text-cyan-600"></i> Editar Artículo de Mochila
+            </h3>
+            <div class="flex flex-col gap-3">
+                <input type="hidden" id="edit-packing-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Nombre del artículo</label>
+                    <input type="text" id="edit-packing-text" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Categoría</label>
+                    <select id="edit-packing-cat" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500 bg-white">
+                        <option value="vital">📋 Imprescindible (Vital)</option>
+                        <option value="clothing">👕 Ropa y Calzado (Playa/Trekking)</option>
+                        <option value="extras">🔌 Botiquín y Tech (Extras)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-2">
+                <button onclick="closeEditPackingModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-all">Cancelar</button>
+                <button onclick="saveEditedPacking()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR PUEBLO -->
+    <div id="edit-town-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl flex flex-col gap-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-house-chimney text-teal-600"></i> Editar Pueblo o Ciudad
+            </h3>
+            <div class="flex flex-col gap-3">
+                <input type="hidden" id="edit-town-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Nombre del Pueblo / Ciudad</label>
+                    <input type="text" id="edit-town-name" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Entorno principal</label>
+                    <select id="edit-town-tag" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500 bg-white">
+                        <option value="Montaña">⛰️ Montaña</option>
+                        <option value="Costa">🌊 Costa</option>
+                        <option value="Histórico">🏛️ Histórico</option>
+                        <option value="Naturaleza">🌲 Naturaleza / Valle</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Descripción corta</label>
+                    <textarea id="edit-town-desc" rows="3" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">URL de Foto (Opcional)</label>
+                    <input type="url" id="edit-town-image" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Lugares destacados (separados por comas)</label>
+                    <input type="text" id="edit-town-places" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-2">
+                <button onclick="closeEditTownModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-all">Cancelar</button>
+                <button onclick="saveEditedTown()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR SITIO -->
+    <div id="edit-place-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl flex flex-col gap-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-location-dot text-teal-600"></i> Editar Sitio Recomendado
+            </h3>
+            <div class="flex flex-col gap-3">
+                <input type="hidden" id="edit-place-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Nombre del Sitio</label>
+                    <input type="text" id="edit-place-name" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Ubicación / Población</label>
+                    <input type="text" id="edit-place-loc" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Categoría</label>
+                    <select id="edit-place-cat" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500 bg-white">
+                        <option value="Restaurantes">🍽️ Restaurantes</option>
+                        <option value="Ocio">🥂 Ocio</option>
+                        <option value="Excursiones">🎒 Excursiones</option>
+                        <option value="Cafeterías">☕ Cafeterías</option>
+                        <option value="Supermercados">🛒 Supermercados</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Valoración</label>
+                    <select id="edit-place-rating" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500 bg-white">
+                        <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+                        <option value="4">⭐⭐⭐⭐ Muy Bueno</option>
+                        <option value="3">⭐⭐⭐ Normal</option>
+                        <option value="2">⭐⭐ Regular</option>
+                        <option value="1">⭐ Evitar</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Notas, precios o plato recomendado</label>
+                    <textarea id="edit-place-note" rows="3" class="w-full text-sm bg-slate-50 border border-slate-200 p-2.5 rounded-xl focus:outline-none focus:border-teal-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-2">
+                <button onclick="closeEditPlaceModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-all">Cancelar</button>
+                <button onclick="saveEditedPlace()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE SINCRONIZACIÓN Y CLOUD SYNC -->
+    <div id="sync-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto custom-scroll">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up-down text-teal-600"></i>
+                        Sincronizar entre Móviles
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Comparte y actualiza vuestro viaje a Albania en tiempo real en varios dispositivos.</p>
+                </div>
+                <button onclick="closeSyncModal()" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Sección 1: Código de Sincronización -->
+            <div class="bg-teal-50/60 border border-teal-100 p-4 rounded-2xl flex flex-col gap-3">
+                <h4 class="text-xs font-bold text-teal-800 uppercase tracking-wider">Paso 1: Vuestro Código de Viaje Compartido</h4>
+                <div class="flex gap-2">
+                    <input type="text" id="sync-key-input" class="flex-1 text-center font-mono font-extrabold text-lg text-slate-800 bg-white p-2.5 rounded-xl border border-teal-200 focus:outline-none uppercase" placeholder="Ej. SHQIP-XYZ123">
+                    <button onclick="copySyncCode()" class="bg-white border border-teal-200 hover:bg-teal-100 text-teal-800 p-2.5 rounded-xl transition-all flex items-center justify-center" title="Copiar código">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                    <button onclick="generateNewSyncCode()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold px-3 rounded-xl transition-all" title="Generar nuevo código">
+                        Nuevo
+                    </button>
+                </div>
+                <p class="text-[10px] text-slate-500 leading-snug">
+                    <i class="fa-solid fa-triangle-exclamation text-teal-600"></i> 
+                    Ambos móviles debéis tener exactamente el <strong>mismo código</strong> introducido arriba para poder compartir los datos de vuestra aventura.
+                </p>
+            </div>
+
+            <!-- Sección 2: Acciones de la nube -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="uploadToCloud()" class="bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                    1. Subir mis datos
+                </button>
+                <button onclick="downloadFromCloud()" class="bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-down text-sm"></i>
+                    2. Descargar y Vincular
+                </button>
+            </div>
+
+            <!-- Configuración Auto-sync -->
+            <label class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 cursor-pointer">
+                <input type="checkbox" id="auto-sync-check" onchange="toggleAutoSync(this)" class="rounded border-slate-300 text-teal-600 focus:ring-teal-500 h-4 w-4">
+                <div>
+                    <p class="text-xs font-bold text-slate-800">Auto-Sincronización Inteligente (Recomendado)</p>
+                    <p class="text-[10px] text-slate-500">Descarga cambios al abrir la app y sube tus modificaciones al instante en segundo plano.</p>
+                </div>
+            </label>
+
+            <!-- Separador -->
+            <div class="relative flex py-2 items-center">
+                <div class="flex-grow border-t border-slate-100"></div>
+                <span class="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase">O comparte sin internet (Offline)</span>
+                <div class="flex-grow border-t border-slate-100"></div>
+            </div>
+
+            <!-- Sección 3: Manual Export/Import -->
+            <div class="flex flex-col gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
+                <p class="text-[10px] text-slate-500 leading-normal">
+                    ¿No tenéis conexión a internet? Podéis exportar vuestro viaje en un código de texto Base64 cifrado para enviarlo por WhatsApp.
+                </p>
+                <textarea id="manual-sync-text" rows="2" placeholder="El código de respaldo aparecerá aquí..." class="w-full text-[9px] font-mono p-2 rounded-lg border border-slate-200 focus:outline-none bg-white custom-scroll"></textarea>
+                <div class="grid grid-cols-2 gap-2 mt-1">
+                    <button onclick="exportManual()" class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-[10px] py-2 rounded-lg transition-all">
+                        📄 Generar Código Manual
+                    </button>
+                    <button onclick="importManual()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-[10px] py-2 rounded-lg transition-all">
+                        📥 Importar Código Manual
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos por defecto para el itinerario del 6 al 13 de agosto 2026 (Completamente editable)
+        const defaultItinerary = [
+            { id: 1, title: "Día 1: Jueves 6 Ago - Vuelo Santander ✈ Tirana", activities: "Salida del Aeropuerto de Santander (SDR) a las 21:10. Vuelo de 3 horas de duración. Llegada al Aeropuerto de Tirana (TIA) a las 00:10 (ya viernes 7 de agosto). Recogida del coche de alquiler o traslado directo al hotel de llegada para descansar.", hotel: "Tirana Airport Hotel o alojamiento cercano" },
+            { id: 2, title: "Día 2: Viernes 7 Ago - Tirana - Krujë - Berat", activities: "Recogida de coche en Tirana si no se hizo anoche. Conducir a la histórica ciudad fortaleza de Krujë, pasear por su famoso Bazar de Madera de época otomana y visitar su castillo medieval. Por la tarde, traslado a Berat ('La ciudad de las mil ventanas') para presenciar el atardecer y cenar en Mangalem.", hotel: "Guesthouse Berat (Ej. Berat Backpackers / Mangalemi)" },
+            { id: 3, title: "Día 3: Sábado 8 Ago - Berat - Gjirokastër", activities: "Subir a explorar el inmenso Castillo de Berat por la mañana. Conducir dirección sur cruzando paisajes interiores increíbles hasta alcanzar Gjirokastër ('La ciudad de piedra'). Explorar sus calles de pizarra gris, el Bazar medieval y visitar la Casa Zekate.", hotel: "Stone City Guesthouse (Gjirokastër)" },
+            { id: 4, title: "Día 4: Domingo 9 Ago - Gjirokastër - Blue Eye - Ksamil", activities: "Visita matinal al espectacular manantial kárstico del Ojo Azul (Syri i Kaltër), cuyas aguas turquesas y transparentes os fascinarán. Continuación a las playas caribeñas de Ksamil frente a la costa de Corfú.", hotel: "Ksamil Beach Resort" },
+            { id: 5, title: "Día 5: Lunes 10 Ago - Ksamil - Ruinas de Butrinto - Sarandë", activities: "Visita arqueológica e histórica a las ruinas romanas, griegas y venecianas camufladas en la selva del Parque Nacional de Butrinto (UNESCO). Tarde de playa y relax absoluto en Ksamil. Paseo nocturno y cena por el paseo marítimo de Sarandë.", hotel: "Ksamil Beach Resort" },
+            { id: 6, title: "Día 6: Martes 11 Ago - Riviera Albanesa (Himarë / Playa de Gjipe)", activities: "Subida por la escénica Riviera de costa jónica. Parada en Himarë y desvío para bajar a la paradisíaca playa salvaje de Gjipe (acceso a pie de 25 min a través de un cañón natural). Relax absoluto en sus aguas transparentes.", hotel: "Himarë Sea View Apartments" },
+            { id: 7, title: "Día 7: Miércoles 12 Ago - Costa - Paso de Llogara - Tirana", activities: "Conducción panorámica de infarto ascendiendo el espectacular Paso de Llogara a más de 1000m sobre el nivel del mar con vistas al Jónico. Desvío y llegada a la capital Tirana. Tarde de compras de souvenirs, visita a la Plaza Skanderbeg y cena de celebración en Blloku.", hotel: "Hotel Center Plaza (Tirana)" },
+            { id: 8, title: "Día 8: Jueves 13 Ago - Tirana - Vuelo de Regreso", activities: "Visita opcional al impactante museo subterráneo de la época comunista Bunk'Art 1 o 2. Devolución del coche de alquiler en el aeropuerto de Tirana (TIA) y embarque para vuestro vuelo de vuelta a Santander.", hotel: "¡Regreso a Casa!" }
+        ];
+
+        const defaultExpenses = [
+            { id: 1, desc: "Fianza y Alquiler de coche (8 días)", amount: 240, category: "Transporte" },
+            { id: 2, desc: "Alojamiento en Berat (Guesthouse)", amount: 45, category: "Alojamiento" },
+            { id: 3, desc: "Cena tradicional en Oda (Tirana)", amount: 25, category: "Comida" },
+            { id: 4, desc: "Entradas Butrinto", amount: 10, category: "Actividades" }
+        ];
+
+        const defaultPacking = [
+            { id: 1, text: "Pasaporte / DNI en regla (vigencia 3 meses)", checked: true, cat: "vital" },
+            { id: 2, text: "Dinero en efectivo (Euros listos para cambiar a Leks)", checked: false, cat: "vital" },
+            { id: 3, text: "Seguro de viaje privado contratado", checked: false, cat: "vital" },
+            { id: 4, text: "Zapatillas de trekking / senderismo (Alpes/Gjipe)", checked: false, cat: "clothing" },
+            { id: 5, text: "Escarpines (vitales para playas de piedras)", checked: false, cat: "clothing" },
+            { id: 6, text: "Bañador y toalla de playa de secado rápido", checked: true, cat: "clothing" },
+            { id: 7, text: "Cargador portátil / Powerbank de viaje", checked: false, cat: "extras" },
+            { id: 8, text: "Adaptador de enchufe estándar europeo", checked: true, cat: "extras" },
+            { id: 9, text: "Biodramina (para curvas de montaña y costa)", checked: false, cat: "extras" }
+        ];
+
+        const defaultDocuments = {
+            flightOutAirline: "Wizz Air (W45160)",
+            flightOutPnr: "DJ6E2P",
+            flightOutDatetime: "Jue, 6 Ago 2026 - 21:10 (SDR -> TIA)",
+            flightOutSeats: "Santander (SDR) a Tirana (TIA) | Llegada Vie 7 Ago 0:10 (Duración: 3h)",
+            flightRetAirline: "Wizz Air",
+            flightRetPnr: "DJ6E2P",
+            flightRetDatetime: "Jue, 13 Ago 2026",
+            flightRetSeats: "Tirana (TIA) a Santander (SDR)",
+            insCompany: "IATI Seguros / Mondo",
+            insPolicy: "POL-8293-ALB",
+            insPhone: "+34 93 485 71 52",
+            insStatus: "Contratado y Activo",
+            insNotes: "Modalidad Mochilero. Cobertura médica completa fuera de la Unión Europea.",
+            hotels: [
+                { id: 1, name: "Hotel de llegada Tirana", dates: "6-7 Ago (1 noche)", pnr: "BK-94821", price: "50 €" },
+                { id: 2, name: "Berat Guesthouse", dates: "7-8 Ago (1 noche)", pnr: "BK-10294", price: "45 €" },
+                { id: 3, name: "Ksamil Beach Resort", dates: "9-11 Ago (2 noches)", pnr: "BK-47392", price: "130 €" }
+            ],
+            carCompany: "Localrent / Local Agency",
+            carModel: "Hyundai i20 (Manual o similar)",
+            carPickup: "Aeropuerto Tirana (TIA) - Jue 6 Ago 23:59 o Vie 7 Ago",
+            carDropoff: "Aeropuerto Tirana (TIA) - Jue 13 Ago 19:00",
+            carPnr: "CAR-9482-AL",
+            carPrice: "240 €",
+            carDeposit: "Fianza de 150€ en metálico. Pago del alquiler al recibir el vehículo.",
+            simProvider: "Airalo (eSIM) o Vodafone AL",
+            simPlan: "Tourist Pack - 100 GB por 15 días",
+            simStatus: "Comprar en destino (Física)",
+            simPrice: "15 € - 20 €",
+            simSteps: "Comprar SIM física de Vodafone al aterrizar en el stand del aeropuerto de Tirana."
+        };
+
+        const defaultTowns = [
+            { 
+                id: 1, 
+                name: "Theth", 
+                desc: "Espectacular joya alpina en el norte de Albania, rodeada de gigantes calizos, cascadas y un entorno rural de ensueño.", 
+                tag: "Montaña", 
+                image: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=600&q=80",
+                places: ["Iglesia de Madera de Theth", "Cascada de Grunas", "Ojo Azul Alpino (Syri i Kaltër)"],
+                visited: false 
+            },
+            { 
+                id: 2, 
+                name: "Berat", 
+                desc: "Patrimonio de la Humanidad por la UNESCO. Famosa por sus casas de estilo otomano escalonadas que le valieron el apodo de 'ciudad de las mil ventanas'.", 
+                tag: "Histórico", 
+                image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=600&q=80",
+                places: ["Barrio de Mangalem", "Barrio de Gorica", "Castillo de Berat (Kala)"],
+                visited: false 
+            },
+            { 
+                id: 3, 
+                name: "Gjirokastër", 
+                desc: "La ciudad de piedra. Con imponentes tejados de losa gris y una arquitectura otomana única custodiada por su gran fortaleza medieval.", 
+                tag: "Histórico", 
+                image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
+                places: ["Castillo de Gjirokastër", "Antiguo Bazar", "Casa Histórica Zekate"],
+                visited: false 
+            },
+            { 
+                id: 4, 
+                name: "Qeparo", 
+                desc: "Un rincón mágico dividido entre la costa jónica y el antiguo pueblo histórico de piedra encaramado en lo alto de la colina.", 
+                tag: "Costa", 
+                image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
+                places: ["Ruinas del Antiguo Qeparo", "Playa Salvaje", "Olivos Centenarios"],
+                visited: false 
+            },
+            { 
+                id: 5, 
+                name: "Dhërmi", 
+                desc: "Preciosas iglesias ortodoxas asomadas al abismo marino del mar Jónico. Cuenta con calas espectaculares en sus inmediaciones.", 
+                tag: "Costa", 
+                image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",
+                places: ["Playa Gjipe (Cañón y Calas)", "Monasterio de Panagia", "Cueva de los Piratas"],
+                visited: false 
+            },
+            { 
+                id: 6, 
+                name: "Krujë", 
+                desc: "Cuna de la resistencia de Skanderbeg frente a los otomanos. Alberga un pintoresco bazar medieval hecho enteramente de madera.", 
+                tag: "Histórico", 
+                image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+                places: ["Castillo de Krujë", "Bazar de Madera", "Museo Histórico"],
+                visited: false 
+            }
+        ];
+
+        const defaultPlaces = [
+            { id: 1, name: "Oda Traditional Tavern", cat: "Restaurantes", loc: "Tirana", note: "Sabroso cordero asado y fërgesë dentro de una clásica vivienda otomana muy popular.", rating: 5 },
+            { id: 2, name: "Mangalemi Restaurant", cat: "Restaurantes", loc: "Berat", note: "Disfruta de una cena con vistas a las ventanas iluminadas de Mangalem. El Tavë Kosi es de 10.", rating: 5 },
+            { id: 3, name: "Taverna Lazaro", cat: "Restaurantes", loc: "Sarandë", note: "Marisco fresquísimo al mejor precio de la costa jónica.", rating: 4 },
+            { id: 4, name: "Radio Bar", cat: "Ocio", loc: "Tirana (Blloku)", note: "Copas increíbles en un patio cubierto lleno de radios retro y decoración comunista.", rating: 5 },
+            { id: 5, name: "La Brisa Beach Bar", cat: "Ocio", loc: "Himarë", note: "Relajante bar de playa con pufs, ideal para tomar un cóctel al atardecer.", rating: 4 },
+            { id: 6, name: "Manantial Syri i Kaltër (Blue Eye)", cat: "Excursiones", loc: "Cerca de Sarandë", note: "Impresionante piscina natural turquesa profunda. Aguas heladas pero bellísimas.", rating: 5 },
+            { id: 7, name: "Ferry del Lago Koman", cat: "Excursiones", loc: "Norte de Albania", note: "Navegación de 3 horas por cañones escarpados que recuerdan a fiordos noruegos.", rating: 5 },
+            { id: 8, name: "Komiteti Kafe Muze", cat: "Cafeterías", loc: "Tirana", note: "Museo repleto de antigüedades que sirve café tradicional y decenas de variedades de Raki.", rating: 5 },
+            { id: 9, name: "Big Market", cat: "Supermercados", loc: "Todo el país", note: "La cadena más económica de supermercados en Albania. Perfecta para el día a día.", rating: 4 }
+        ];
+
+        const phrases = [
+            { shqip: "Përshëndetje", pron: "Pershendetie", esp: "Hola" },
+            { shqip: "Faleminderit", pron: "Faleminderit", esp: "Gracias" },
+            { shqip: "Ju lutem", pron: "Iu lutem", esp: "Por favor" },
+            { shqip: "Po / Jo", pron: "Po / Io", esp: "Sí / No" },
+            { shqip: "Sa kushton?", pron: "Sa kushton?", esp: "¿Cuánto cuesta?" },
+            { shqip: "Mirëdita", pron: "Miredita", esp: "Buenos días" },
+            { shqip: "Faturën, ju lutem", pron: "Faturen, iu lutem", esp: "La cuenta, por favor" },
+            { shqip: "Gëzuar!", pron: "Guezuar!", esp: "¡Salud!" }
+        ];
+
+        // URL del bucket en la nube (Usando un espacio único para evitar colisiones)
+        const SYNC_URL = 'https://kvdb.io/ShqipTourSync2026_xYz987_v2/';
+
+        let state = {
+            itinerary: JSON.parse(localStorage.getItem('albania_itinerary')) || defaultItinerary,
+            expenses: JSON.parse(localStorage.getItem('albania_expenses')) || defaultExpenses,
+            packing: JSON.parse(localStorage.getItem('albania_packing')) || defaultPacking,
+            documents: JSON.parse(localStorage.getItem('albania_documents')) || defaultDocuments,
+            towns: JSON.parse(localStorage.getItem('albania_towns')) || defaultTowns,
+            places: JSON.parse(localStorage.getItem('albania_places')) || defaultPlaces,
+            syncKey: localStorage.getItem('albania_sync_key') || generateDefaultSyncKey(),
+            autoSync: JSON.parse(localStorage.getItem('albania_auto_sync')) || false
+        };
+
+        let activePlacesFilter = 'Todos';
+
+        // Generar un código único por defecto para sincronizar la primera vez
+        function generateDefaultSyncKey() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = 'SHQIP-';
+            for (let i = 0; i < 5; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        // Guardar estado en localStorage
+        function saveState() {
+            localStorage.setItem('albania_itinerary', JSON.stringify(state.itinerary));
+            localStorage.setItem('albania_expenses', JSON.stringify(state.expenses));
+            localStorage.setItem('albania_packing', JSON.stringify(state.packing));
+            localStorage.setItem('albania_documents', JSON.stringify(state.documents));
+            localStorage.setItem('albania_towns', JSON.stringify(state.towns));
+            localStorage.setItem('albania_places', JSON.stringify(state.places));
+            localStorage.setItem('albania_sync_key', state.syncKey);
+            localStorage.setItem('albania_auto_sync', JSON.stringify(state.autoSync));
+            
+            updateAllViews();
+
+            // Sincronización automática silenciosa si está activada
+            if (state.autoSync) {
+                uploadToCloudSilent();
+            }
+        }
+
+        // Cambio de pestañas principales fluido
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
+            
+            document.querySelectorAll('[id^="btn-tab-"]').forEach(btn => {
+                btn.classList.remove('bg-teal-50', 'text-teal-700', 'border-l-4', 'border-teal-600');
+                btn.classList.add('text-slate-600');
+            });
+            document.querySelectorAll('[id^="btn-m-"]').forEach(btn => {
+                btn.classList.remove('text-teal-600');
+                btn.classList.add('text-slate-500');
+            });
+
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+            const desktopBtn = document.getElementById(`btn-tab-${tabId}`);
+            if (desktopBtn) {
+                desktopBtn.classList.add('bg-teal-50', 'text-teal-700', 'border-l-4', 'border-teal-600');
+                desktopBtn.classList.remove('text-slate-600');
+            }
+
+            const mobileBtn = document.getElementById(`btn-m-${tabId}`);
+            if (mobileBtn) {
+                mobileBtn.classList.add('text-teal-600');
+                mobileBtn.classList.remove('text-slate-500');
+            }
+        }
+
+        function switchPlacesSubTab(subTabId) {
+            const btnPueblos = document.getElementById('btn-sub-pueblos');
+            const btnSitios = document.getElementById('btn-sub-sitios');
+            const subViewPueblos = document.getElementById('places-sub-pueblos');
+            const subViewSitios = document.getElementById('places-sub-sitios');
+
+            if (subTabId === 'pueblos') {
+                subViewPueblos.classList.remove('hidden');
+                subViewSitios.classList.add('hidden');
+                
+                btnPueblos.className = "flex-1 py-3 text-xs sm:text-sm font-bold text-center rounded-xl transition-all flex items-center justify-center gap-2 text-teal-700 bg-white shadow-sm border border-slate-200/50";
+                btnSitios.className = "flex-1 py-3 text-xs sm:text-sm font-bold text-center rounded-xl transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800";
+            } else {
+                subViewPueblos.classList.add('hidden');
+                subViewSitios.classList.remove('hidden');
+
+                btnPueblos.className = "flex-1 py-3 text-xs sm:text-sm font-bold text-center rounded-xl transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800";
+                btnSitios.className = "flex-1 py-3 text-xs sm:text-sm font-bold text-center rounded-xl transition-all flex items-center justify-center gap-2 text-teal-700 bg-white shadow-sm border border-slate-200/50";
+            }
+        }
+
+        // Sistema de Notificaciones Inteligentes (sin usar alert)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `p-4 rounded-xl shadow-lg border text-xs font-bold flex items-center gap-2 fade-in transition-all ${
+                type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
+            }`;
+            
+            const icon = type === 'success' 
+                ? '<i class="fa-solid fa-circle-check text-emerald-600"></i>' 
+                : '<i class="fa-solid fa-circle-exclamation text-rose-600"></i>';
+                
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showMapPoint(title, desc) {
+            document.getElementById('map-point-title').innerText = title;
+            document.getElementById('map-point-desc').innerText = desc;
+            
+            const box = document.getElementById('map-info-box');
+            box.classList.add('scale-105', 'bg-teal-50');
+            setTimeout(() => {
+                box.classList.remove('scale-105', 'bg-teal-50');
+            }, 400);
+        }
+
+        // APARTADO CLOUD SYNC
+        function openSyncModal() {
+            document.getElementById('sync-key-input').value = state.syncKey;
+            document.getElementById('auto-sync-check').checked = state.autoSync;
+            document.getElementById('sync-modal').classList.remove('hidden');
+            exportManual(); // Generar código manual automáticamente para que esté listo
+        }
+
+        function closeSyncModal() {
+            document.getElementById('sync-modal').classList.add('hidden');
+        }
+
+        function generateNewSyncCode() {
+            const nextKey = generateDefaultSyncKey();
+            state.syncKey = nextKey;
+            document.getElementById('sync-key-input').value = nextKey;
+            saveState();
+            showToast("Nuevo código de viaje generado de forma local.");
+        }
+
+        function copySyncCode() {
+            const input = document.getElementById('sync-key-input');
+            input.select();
+            document.execCommand('copy');
+            showToast("¡Código copiado al portapapeles!");
+        }
+
+        async function uploadToCloud() {
+            const key = document.getElementById('sync-key-input').value.trim().toUpperCase();
+            if (!key || key.length < 4) {
+                showToast("Por favor, introduce un código de viaje válido.", "error");
+                return;
+            }
+            state.syncKey = key;
+            try {
+                showToast("Subiendo información del viaje a la nube...");
+                const response = await fetch(`${SYNC_URL}${key}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        itinerary: state.itinerary,
+                        expenses: state.expenses,
+                        packing: state.packing,
+                        documents: state.documents,
+                        towns: state.towns,
+                        places: state.places
+                    })
+                });
+                if (response.ok) {
+                    showToast("¡Sincronizado! Vuestro viaje está guardado de forma segura.");
+                    saveState();
+                } else {
+                    showToast("Error del servidor al sincronizar.", "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error de conexión. Comprueba tu señal a internet.", "error");
+            }
+        }
+
+        async function uploadToCloudSilent() {
+            const key = state.syncKey;
+            if (!key) return;
+            try {
+                await fetch(`${SYNC_URL}${key}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        itinerary: state.itinerary,
+                        expenses: state.expenses,
+                        packing: state.packing,
+                        documents: state.documents,
+                        towns: state.towns,
+                        places: state.places
+                    })
+                });
+            } catch (err) {
+                console.warn("Silent sync failed:", err);
+            }
+        }
+
+        async function downloadFromCloud() {
+            const key = document.getElementById('sync-key-input').value.trim().toUpperCase();
+            if (!key) {
+                showToast("Introduce el código de sincronización para buscar en la nube.", "error");
+                return;
+            }
+            try {
+                showToast("Buscando vuestro viaje en la nube...");
+                const response = await fetch(`${SYNC_URL}${key}`);
+                if (response.status === 404) {
+                    showToast("Código de viaje no encontrado en la nube. Sube los datos primero desde el otro móvil.", "error");
+                    return;
+                }
+                if (!response.ok) {
+                    throw new Error("Error en la descarga");
+                }
+                const cloudData = await response.json();
+                
+                // Actualizar estado local
+                state.itinerary = cloudData.itinerary || state.itinerary;
+                state.expenses = cloudData.expenses || state.expenses;
+                state.packing = cloudData.packing || state.packing;
+                state.documents = cloudData.documents || state.documents;
+                state.towns = cloudData.towns || state.towns;
+                state.places = cloudData.places || state.places;
+                state.syncKey = key;
+
+                saveState();
+                updateAllViews();
+                showToast("¡Viaje descargado y sincronizado con éxito!");
+                closeSyncModal();
+            } catch (err) {
+                console.error(err);
+                showToast("Error de descarga. Inténtalo de nuevo.", "error");
+            }
+        }
+
+        async function downloadFromCloudSilent() {
+            const key = state.syncKey;
+            if (!key) return;
+            try {
+                const response = await fetch(`${SYNC_URL}${key}`);
+                if (response.ok) {
+                    const cloudData = await response.json();
+                    state.itinerary = cloudData.itinerary || state.itinerary;
+                    state.expenses = cloudData.expenses || state.expenses;
+                    state.packing = cloudData.packing || state.packing;
+                    state.documents = cloudData.documents || state.documents;
+                    state.towns = cloudData.towns || state.towns;
+                    state.places = cloudData.places || state.places;
+                    saveState();
+                }
+            } catch (err) {
+                console.warn("Silent pull failed:", err);
+            }
+        }
+
+        function toggleAutoSync(checkbox) {
+            state.autoSync = checkbox.checked;
+            saveState();
+            if (state.autoSync) {
+                showToast("Auto-Sincronización activada con éxito.");
+                uploadToCloudSilent();
+            } else {
+                showToast("Sincronización en segundo plano desactivada.");
+            }
+        }
+
+        // Respaldos Manuales sin Internet (Base64)
+        function exportManual() {
+            const jsonStr = JSON.stringify({
+                itinerary: state.itinerary,
+                expenses: state.expenses,
+                packing: state.packing,
+                documents: state.documents,
+                towns: state.towns,
+                places: state.places
+            });
+            // Codificar en Base64 para evitar caracteres rotos al enviar por chats
+            const base64Str = btoa(unescape(encodeURIComponent(jsonStr)));
+            document.getElementById('manual-sync-text').value = base64Str;
+        }
+
+        function importManual() {
+            const base64Str = document.getElementById('manual-sync-text').value.trim();
+            if (!base64Str) {
+                showToast("Por favor, introduce el código Base64 para importar.", "error");
+                return;
+            }
+            try {
+                const jsonStr = decodeURIComponent(escape(atob(base64Str)));
+                const data = JSON.parse(jsonStr);
+                
+                state.itinerary = data.itinerary || state.itinerary;
+                state.expenses = data.expenses || state.expenses;
+                state.packing = data.packing || state.packing;
+                state.documents = data.documents || state.documents;
+                state.towns = data.towns || state.towns;
+                state.places = data.places || state.places;
+                
+                saveState();
+                updateAllViews();
+                showToast("¡Viaje importado de forma manual con éxito!");
+                closeSyncModal();
+            } catch (err) {
+                showToast("El código manual no es válido o está incompleto.", "error");
+            }
+        }
+
+        // Gestión de Documentación y Reservas
+        function saveAllDocuments() {
+            state.documents.flightOutAirline = document.getElementById('doc-flight-out-airline').value;
+            state.documents.flightOutPnr = document.getElementById('doc-flight-out-pnr').value;
+            state.documents.flightOutDatetime = document.getElementById('doc-flight-out-datetime').value;
+            state.documents.flightOutSeats = document.getElementById('doc-flight-out-seats').value;
+            
+            state.documents.flightRetAirline = document.getElementById('doc-flight-ret-airline').value;
+            state.documents.flightRetPnr = document.getElementById('doc-flight-ret-pnr').value;
+            state.documents.flightRetDatetime = document.getElementById('doc-flight-ret-datetime').value;
+            state.documents.flightRetSeats = document.getElementById('doc-flight-ret-seats').value;
+
+            state.documents.insCompany = document.getElementById('doc-ins-company').value;
+            state.documents.insPolicy = document.getElementById('doc-ins-policy').value;
+            state.documents.insPhone = document.getElementById('doc-ins-phone').value;
+            state.documents.insStatus = document.getElementById('doc-ins-status').value;
+            state.documents.insNotes = document.getElementById('doc-ins-notes').value;
+
+            state.documents.carCompany = document.getElementById('doc-car-company').value;
+            state.documents.carModel = document.getElementById('doc-car-model').value;
+            state.documents.carPickup = document.getElementById('doc-car-pickup').value;
+            state.documents.carDropoff = document.getElementById('doc-car-dropoff').value;
+            state.documents.carPnr = document.getElementById('doc-car-pnr').value;
+            state.documents.carPrice = document.getElementById('doc-car-price').value;
+            state.documents.carDeposit = document.getElementById('doc-car-deposit').value;
+
+            state.documents.simProvider = document.getElementById('doc-sim-provider').value;
+            state.documents.simPlan = document.getElementById('doc-sim-plan').value;
+            state.documents.simStatus = document.getElementById('doc-sim-status').value;
+            state.documents.simPrice = document.getElementById('doc-sim-price').value;
+            state.documents.simSteps = document.getElementById('doc-sim-steps').value;
+
+            const hotelRows = document.querySelectorAll('.hotel-row-item');
+            state.documents.hotels = [];
+            hotelRows.forEach(row => {
+                const id = parseInt(row.dataset.id);
+                const name = row.querySelector('.hotel-inp-name').value;
+                const dates = row.querySelector('.hotel-inp-dates').value;
+                const pnr = row.querySelector('.hotel-inp-pnr').value;
+                const price = row.querySelector('.hotel-inp-price').value;
+                state.documents.hotels.push({ id, name, dates, pnr, price });
+            });
+
+            saveState();
+            showToast("¡Toda la documentación y reservas han sido guardadas!");
+        }
+
+        function addDocHotelRow() {
+            const nextId = state.documents.hotels.length > 0 ? Math.max(...state.documents.hotels.map(h => h.id)) + 1 : 1;
+            state.documents.hotels.push({
+                id: nextId,
+                name: "",
+                dates: "",
+                pnr: "",
+                price: ""
+            });
+            renderDocHotels();
+            showToast("Nueva fila de alojamiento añadida.");
+        }
+
+        function deleteDocHotelRow(id) {
+            state.documents.hotels = state.documents.hotels.filter(h => h.id !== id);
+            renderDocHotels();
+            showToast("Fila de alojamiento eliminada.", "error");
+        }
+
+        function renderDocHotels() {
+            const tbody = document.getElementById('doc-hotels-tbody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            state.documents.hotels.forEach(hotel => {
+                tbody.innerHTML += `
+                    <tr class="hotel-row-item hover:bg-slate-50 transition-colors" data-id="${hotel.id}">
+                        <td class="py-2.5 pr-2">
+                            <input type="text" value="${hotel.name}" placeholder="Nombre del Hotel" class="hotel-inp-name w-full text-xs p-1.5 rounded border border-slate-200 font-semibold text-slate-800">
+                        </td>
+                        <td class="py-2.5 px-2">
+                            <input type="text" value="${hotel.dates}" placeholder="Ej. 15-16 Jul" class="hotel-inp-dates w-full text-xs p-1.5 rounded border border-slate-200">
+                        </td>
+                        <td class="py-2.5 px-2">
+                            <input type="text" value="${hotel.pnr}" placeholder="Localizador" class="hotel-inp-pnr w-full text-xs p-1.5 rounded border border-slate-200 font-mono uppercase">
+                        </td>
+                        <td class="py-2.5 px-2">
+                            <input type="text" value="${hotel.price}" placeholder="Ej. 50 €" class="hotel-inp-price w-full text-xs p-1.5 rounded border border-slate-200">
+                        </td>
+                        <td class="py-2.5 pl-2 text-right">
+                            <button onclick="deleteDocHotelRow(${hotel.id})" class="text-slate-300 hover:text-rose-600 p-1.5 transition-colors">
+                                <i class="fa-regular fa-trash-can text-xs"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Conversor de Divisas Dinámico
+        function convertDivisa(from) {
+            const eurInput = document.getElementById('conv-eur');
+            const allInput = document.getElementById('conv-all');
+            const rate = 95.45; // Tasa oficial actualizada de EUR a ALL
+
+            if (from === 'eur') {
+                const val = parseFloat(eurInput.value);
+                if (!isNaN(val)) {
+                    allInput.value = Math.round(val * rate);
+                } else {
+                    allInput.value = '';
+                }
+            } else {
+                const val = parseFloat(allInput.value);
+                if (!isNaN(val)) {
+                    eurInput.value = (val / rate).toFixed(2);
+                } else {
+                    eurInput.value = '';
+                }
+            }
+        }
+
+        // Gestión de Itinerario (EDICIÓN COMPLETA)
+        function openAddDayModal() {
+            document.getElementById('add-day-modal').classList.remove('hidden');
+        }
+
+        function closeAddDayModal() {
+            document.getElementById('add-day-modal').classList.add('hidden');
+            document.getElementById('modal-day-title').value = '';
+            document.getElementById('modal-day-activities').value = '';
+            document.getElementById('modal-day-hotel').value = '';
+        }
+
+        function saveNewDay() {
+            const title = document.getElementById('modal-day-title').value.trim();
+            const activities = document.getElementById('modal-day-activities').value.trim();
+            const hotel = document.getElementById('modal-day-hotel').value.trim();
+
+            if (!title) {
+                showToast("Por favor, introduce al menos el título.", "error");
+                return;
+            }
+
+            const nextId = state.itinerary.length > 0 ? Math.max(...state.itinerary.map(d => d.id)) + 1 : 1;
+            state.itinerary.push({
+                id: nextId,
+                title,
+                activities: activities || "Sin actividades registradas.",
+                hotel: hotel || "Por determinar"
+            });
+
+            saveState();
+            closeAddDayModal();
+            showToast("¡Día añadido al itinerario!");
+        }
+
+        function openEditDayModal(id) {
+            const day = state.itinerary.find(d => d.id === id);
+            if (!day) return;
+
+            document.getElementById('edit-day-id').value = day.id;
+            document.getElementById('edit-day-title').value = day.title;
+            document.getElementById('edit-day-activities').value = day.activities;
+            document.getElementById('edit-day-hotel').value = day.hotel || '';
+
+            document.getElementById('edit-day-modal').classList.remove('hidden');
+        }
+
+        function closeEditDayModal() {
+            document.getElementById('edit-day-modal').classList.add('hidden');
+        }
+
+        function saveEditedDay() {
+            const id = parseInt(document.getElementById('edit-day-id').value);
+            const title = document.getElementById('edit-day-title').value.trim();
+            const activities = document.getElementById('edit-day-activities').value.trim();
+            const hotel = document.getElementById('edit-day-hotel').value.trim();
+
+            if (!title || !activities) {
+                showToast("Por favor, completa los campos obligatorios.", "error");
+                return;
+            }
+
+            const index = state.itinerary.findIndex(d => d.id === id);
+            if (index !== -1) {
+                state.itinerary[index] = {
+                    ...state.itinerary[index],
+                    title,
+                    activities,
+                    hotel: hotel || "Por determinar"
+                };
+                saveState();
+                closeEditDayModal();
+                showToast("¡Día de itinerario actualizado con éxito!");
+            }
+        }
+
+        function deleteDay(id) {
+            state.itinerary = state.itinerary.filter(d => d.id !== id);
+            saveState();
+            showToast("Día de itinerario eliminado.", "error");
+        }
+
+        // Gestión de Gastos (EDICIÓN COMPLETA)
+        function addExpense(e) {
+            e.preventDefault();
+            const desc = document.getElementById('expense-desc').value.trim();
+            const amount = parseFloat(document.getElementById('expense-amount').value);
+            const category = document.getElementById('expense-category').value;
+
+            if (!desc || isNaN(amount) || amount <= 0) {
+                showToast("Por favor, rellena los campos correctamente.", "error");
+                return;
+            }
+
+            const nextId = state.expenses.length > 0 ? Math.max(...state.expenses.map(ex => ex.id)) + 1 : 1;
+            state.expenses.push({ id: nextId, desc, amount, category });
+
+            saveState();
+            document.getElementById('expense-desc').value = '';
+            document.getElementById('expense-amount').value = '';
+            showToast("Gasto añadido correctamente.");
+        }
+
+        function openEditExpenseModal(id) {
+            const expense = state.expenses.find(ex => ex.id === id);
+            if (!expense) return;
+
+            document.getElementById('edit-expense-id').value = expense.id;
+            document.getElementById('edit-expense-desc').value = expense.desc;
+            document.getElementById('edit-expense-amount').value = expense.amount;
+            document.getElementById('edit-expense-category').value = expense.category;
+
+            document.getElementById('edit-expense-modal').classList.remove('hidden');
+        }
+
+        function closeEditExpenseModal() {
+            document.getElementById('edit-expense-modal').classList.add('hidden');
+        }
+
+        function saveEditedExpense() {
+            const id = parseInt(document.getElementById('edit-expense-id').value);
+            const desc = document.getElementById('edit-expense-desc').value.trim();
+            const amount = parseFloat(document.getElementById('edit-expense-amount').value);
+            const category = document.getElementById('edit-expense-category').value;
+
+            if (!desc || isNaN(amount) || amount <= 0) {
+                showToast("Por favor, completa los campos correctamente.", "error");
+                return;
+            }
+
+            const index = state.expenses.findIndex(ex => ex.id === id);
+            if (index !== -1) {
+                state.expenses[index] = {
+                    ...state.expenses[index],
+                    desc,
+                    amount,
+                    category
+                };
+                saveState();
+                closeEditExpenseModal();
+                showToast("Gasto actualizado.");
+            }
+        }
+
+        function deleteExpense(id) {
+            state.expenses = state.expenses.filter(ex => ex.id !== id);
+            saveState();
+            showToast("Gasto eliminado.", "error");
+        }
+
+        // Gestión de Equipaje (EDICIÓN COMPLETA)
+        function addPackingItem() {
+            const input = document.getElementById('new-packing-item');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const nextId = state.packing.length > 0 ? Math.max(...state.packing.map(i => i.id)) + 1 : 1;
+            state.packing.push({ id: nextId, text, checked: false, cat: "extras" });
+            
+            input.value = '';
+            saveState();
+            showToast("Artículo añadido a equipaje.");
+        }
+
+        function openEditPackingModal(id) {
+            const item = state.packing.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('edit-packing-id').value = item.id;
+            document.getElementById('edit-packing-text').value = item.text;
+            document.getElementById('edit-packing-cat').value = item.cat;
+
+            document.getElementById('edit-packing-modal').classList.remove('hidden');
+        }
+
+        function closeEditPackingModal() {
+            document.getElementById('edit-packing-modal').classList.add('hidden');
+        }
+
+        function saveEditedPacking() {
+            const id = parseInt(document.getElementById('edit-packing-id').value);
+            const text = document.getElementById('edit-packing-text').value.trim();
+            const cat = document.getElementById('edit-packing-cat').value;
+
+            if (!text) {
+                showToast("Introduce el nombre del artículo.", "error");
+                return;
+            }
+
+            const index = state.packing.findIndex(i => i.id === id);
+            if (index !== -1) {
+                state.packing[index] = {
+                    ...state.packing[index],
+                    text,
+                    cat
+                };
+                saveState();
+                closeEditPackingModal();
+                showToast("Mochila actualizada.");
+            }
+        }
+
+        function togglePackingItem(id) {
+            const item = state.packing.find(i => i.id === id);
+            if (item) {
+                item.checked = !item.checked;
+                saveState();
+            }
+        }
+
+        function deletePackingItem(id) {
+            state.packing = state.packing.filter(i => i.id !== id);
+            saveState();
+            showToast("Artículo eliminado de equipaje.", "error");
+        }
+
+        // Gestión de Pueblos y Lugares recomendados
+        function toggleTownVisited(id) {
+            const town = state.towns.find(t => t.id === id);
+            if (town) {
+                town.visited = !town.visited;
+                saveState();
+                showToast(town.visited ? `🎉 ¡Habéis visitado ${town.name}!` : `📍 ${town.name} añadido a pendientes.`);
+            }
+        }
+
+        function addCustomTown(e) {
+            e.preventDefault();
+            const name = document.getElementById('add-town-name').value.trim();
+            const tag = document.getElementById('add-town-tag').value;
+            const desc = document.getElementById('add-town-desc').value.trim();
+            const imageInp = document.getElementById('add-town-image').value.trim();
+            const rawPlaces = document.getElementById('add-town-places').value.trim();
+
+            if (!name || !desc) {
+                showToast("Por favor, introduce el nombre y descripción del pueblo.", "error");
+                return;
+            }
+
+            const places = rawPlaces 
+                ? rawPlaces.split(',').map(p => p.trim()).filter(p => p !== '') 
+                : [];
+
+            const nextId = state.towns.length > 0 ? Math.max(...state.towns.map(t => t.id)) + 1 : 1;
+            
+            state.towns.push({
+                id: nextId,
+                name,
+                tag,
+                desc,
+                image: imageInp,
+                places,
+                visited: false
+            });
+
+            saveState();
+            
+            document.getElementById('add-town-name').value = '';
+            document.getElementById('add-town-desc').value = '';
+            document.getElementById('add-town-image').value = '';
+            document.getElementById('add-town-places').value = '';
+
+            showToast(`🏡 ¡Pueblo añadido: ${name}!`);
+        }
+
+        function deleteTown(id) {
+            state.towns = state.towns.filter(t => t.id !== id);
+            saveState();
+            showToast("Pueblo eliminado del explorador.", "error");
+        }
+
+        function openEditTownModal(id) {
+            const town = state.towns.find(t => t.id === id);
+            if (!town) return;
+
+            document.getElementById('edit-town-id').value = town.id;
+            document.getElementById('edit-town-name').value = town.name;
+            document.getElementById('edit-town-tag').value = town.tag;
+            document.getElementById('edit-town-desc').value = town.desc;
+            document.getElementById('edit-town-image').value = town.image || '';
+            document.getElementById('edit-town-places').value = town.places ? town.places.join(', ') : '';
+
+            document.getElementById('edit-town-modal').classList.remove('hidden');
+        }
+
+        function closeEditTownModal() {
+            document.getElementById('edit-town-modal').classList.add('hidden');
+        }
+
+        function saveEditedTown() {
+            const id = parseInt(document.getElementById('edit-town-id').value);
+            const name = document.getElementById('edit-town-name').value.trim();
+            const tag = document.getElementById('edit-town-tag').value;
+            const desc = document.getElementById('edit-town-desc').value.trim();
+            const image = document.getElementById('edit-town-image').value.trim();
+            const rawPlaces = document.getElementById('edit-town-places').value.trim();
+
+            if (!name || !desc) {
+                showToast("Por favor, introduce el nombre y descripción del pueblo.", "error");
+                return;
+            }
+
+            const places = rawPlaces 
+                ? rawPlaces.split(',').map(p => p.trim()).filter(p => p !== '') 
+                : [];
+
+            const index = state.towns.findIndex(t => t.id === id);
+            if (index !== -1) {
+                state.towns[index] = {
+                    ...state.towns[index],
+                    name,
+                    tag,
+                    desc,
+                    image,
+                    places
+                };
+                saveState();
+                closeEditTownModal();
+                showToast(`🏡 ¡Pueblo "${name}" actualizado!`);
+            }
+        }
+
+        function renderTownsList() {
+            const container = document.getElementById('towns-grid-cards');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (state.towns.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-10 bg-white border border-slate-100 rounded-2xl">
+                        <i class="fa-regular fa-folder-open text-3xl text-slate-300 mb-2 block"></i>
+                        <p class="text-xs text-slate-400">Aún no hay pueblos guardados en la guía. ¡Añade vuestro primer pueblo!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            state.towns.forEach(t => {
+                let placesHTML = '';
+                if (t.places && t.places.length > 0) {
+                    t.places.forEach(p => {
+                        placesHTML += `
+                            <span class="bg-teal-50 text-teal-800 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-teal-100/50">
+                                ${p}
+                            </span>
+                        `;
+                    });
+                } else {
+                    placesHTML = `<span class="text-[10px] text-slate-400 italic">No hay monumentos listados</span>`;
+                }
+
+                const imageUrl = t.image && t.image.trim() !== '' 
+                    ? t.image 
+                    : `https://placehold.co/600x400/0f172a/ffffff?text=${t.name}`;
+
+                container.innerHTML += `
+                    <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between ${t.visited ? 'opacity-80' : ''}">
+                        <div>
+                            <div class="relative h-44 bg-slate-100 overflow-hidden">
+                                <img src="${imageUrl}" alt="${t.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x400/0f172a/ffffff?text=${t.name}';" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                                
+                                <span class="absolute top-3 left-3 bg-teal-600 text-white text-[9px] px-2.5 py-1 rounded-full font-extrabold uppercase tracking-wide shadow-sm">
+                                    ${t.tag}
+                                </span>
+                                
+                                <button onclick="toggleTownVisited(${t.id})" class="absolute top-3 right-3 bg-white/95 backdrop-blur-sm hover:bg-white text-sm p-2 rounded-xl shadow-sm transition-all flex items-center justify-center">
+                                    ${t.visited ? '<i class="fa-solid fa-circle-check text-emerald-600"></i>' : '<i class="fa-regular fa-circle text-slate-400 hover:text-teal-600"></i>'}
+                                </button>
+
+                                <div class="absolute bottom-3 left-3 right-3 text-white">
+                                    <h4 class="text-base font-extrabold flex items-center gap-2">
+                                        ${t.name}
+                                        ${t.visited ? '<span class="text-[10px] font-semibold bg-emerald-500/80 px-2 py-0.5 rounded text-white shadow-sm">Visitado</span>' : ''}
+                                    </h4>
+                                </div>
+                            </div>
+
+                            <div class="p-4 flex flex-col gap-3.5">
+                                <p class="text-xs text-slate-500 leading-relaxed">${t.desc}</p>
+                                
+                                <div>
+                                    <h5 class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                        <i class="fa-solid fa-diamond text-[7px] text-teal-600"></i> Qué ver y hacer aquí
+                                    </h5>
+                                    <div class="flex flex-wrap gap-1.5">
+                                        ${placesHTML}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 border-t border-slate-50 flex justify-between bg-slate-50/50">
+                            <button onclick="openEditTownModal(${t.id})" class="text-teal-600 hover:text-teal-800 text-xs p-1 px-2.5 rounded-lg hover:bg-white border border-transparent hover:border-slate-100 transition-all flex items-center gap-1.5 font-bold">
+                                <i class="fa-regular fa-pen-to-square"></i> Editar pueblo
+                            </button>
+                            <button onclick="deleteTown(${t.id})" class="text-slate-400 hover:text-rose-600 text-xs p-1 px-2.5 rounded-lg hover:bg-white border border-transparent hover:border-slate-100 transition-all flex items-center gap-1.5 font-semibold">
+                                <i class="fa-regular fa-trash-can"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterPlaces(category) {
+            activePlacesFilter = category;
+            
+            const filters = {
+                'Todos': 'filter-all',
+                'Restaurantes': 'filter-rest',
+                'Ocio': 'filter-ocio',
+                'Excursiones': 'filter-excur',
+                'Cafeterías': 'filter-cafes',
+                'Supermercados': 'filter-super'
+            };
+            
+            Object.keys(filters).forEach(key => {
+                const btn = document.getElementById(filters[key]);
+                if (btn) {
+                    if (key === category) {
+                        btn.className = "text-xs font-bold px-3 py-2 rounded-xl bg-teal-600 text-white transition-all shadow-sm whitespace-nowrap";
+                    } else {
+                        btn.className = "text-xs font-bold px-3 py-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 transition-all whitespace-nowrap";
+                    }
+                }
+            });
+
+            renderPlacesList();
+        }
+
+        function addCustomPlace(e) {
+            e.preventDefault();
+            const name = document.getElementById('add-place-name').value.trim();
+            const loc = document.getElementById('add-place-loc').value.trim();
+            const cat = document.getElementById('add-place-cat').value;
+            const rating = parseInt(document.getElementById('add-place-rating').value);
+            const note = document.getElementById('add-place-note').value.trim();
+
+            if (!name || !loc) {
+                showToast("Introduce el nombre y su ubicación.", "error");
+                return;
+            }
+
+            const nextId = state.places.length > 0 ? Math.max(...state.places.map(p => p.id)) + 1 : 1;
+            state.places.push({
+                id: nextId,
+                name,
+                cat,
+                loc,
+                note: note || "Sin anotaciones extras.",
+                rating
+            });
+
+            saveState();
+            
+            document.getElementById('add-place-name').value = '';
+            document.getElementById('add-place-loc').value = '';
+            document.getElementById('add-place-note').value = '';
+            
+            showToast(`¡Añadido: ${name}!`);
+        }
+
+        function deleteCustomPlace(id) {
+            state.places = state.places.filter(p => p.id !== id);
+            saveState();
+            showToast("Recomendación eliminada con éxito.", "error");
+        }
+
+        function openEditPlaceModal(id) {
+            const place = state.places.find(p => p.id === id);
+            if (!place) return;
+
+            document.getElementById('edit-place-id').value = place.id;
+            document.getElementById('edit-place-name').value = place.name;
+            document.getElementById('edit-place-loc').value = place.loc;
+            document.getElementById('edit-place-cat').value = place.cat;
+            document.getElementById('edit-place-rating').value = place.rating;
+            document.getElementById('edit-place-note').value = place.note || '';
+
+            document.getElementById('edit-place-modal').classList.remove('hidden');
+        }
+
+        function closeEditPlaceModal() {
+            document.getElementById('edit-place-modal').classList.add('hidden');
+        }
+
+        function saveEditedPlace() {
+            const id = parseInt(document.getElementById('edit-place-id').value);
+            const name = document.getElementById('edit-place-name').value.trim();
+            const loc = document.getElementById('edit-place-loc').value.trim();
+            const cat = document.getElementById('edit-place-cat').value;
+            const rating = parseInt(document.getElementById('edit-place-rating').value);
+            const note = document.getElementById('edit-place-note').value.trim();
+
+            if (!name || !loc) {
+                showToast("Introduce el nombre y su ubicación.", "error");
+                return;
+            }
+
+            const index = state.places.findIndex(p => p.id === id);
+            if (index !== -1) {
+                state.places[index] = {
+                    ...state.places[index],
+                    name,
+                    loc,
+                    cat,
+                    rating,
+                    note: note || "Sin anotaciones extras."
+                };
+                saveState();
+                closeEditPlaceModal();
+                showToast(`📍 Sitio "${name}" actualizado!`);
+            }
+        }
+
+        function renderPlacesList() {
+            const container = document.getElementById('places-grid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const filtered = activePlacesFilter === 'Todos'
+                ? state.places
+                : state.places.filter(p => p.cat === activePlacesFilter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-10 bg-white border border-slate-100 rounded-2xl">
+                        <i class="fa-regular fa-folder-open text-3xl text-slate-300 mb-2 block"></i>
+                        <p class="text-xs text-slate-400">Aún no hay sitios registrados en esta categoría.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const categoryIcons = {
+                'Restaurantes': '🍽️',
+                'Ocio': '🥂',
+                'Excursiones': '🎒',
+                'Cafeterías': '☕',
+                'Supermercados': '🛒'
+            };
+
+            filtered.forEach(p => {
+                const stars = '⭐'.repeat(p.rating);
+                container.innerHTML += `
+                    <div class="bg-white border border-slate-100 p-4 rounded-xl shadow-sm hover:shadow-md hover:border-slate-200 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center gap-2 mb-2">
+                                <span class="text-[10px] font-bold bg-slate-50 border border-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full">
+                                    ${categoryIcons[p.cat] || '📍'} ${p.cat}
+                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="openEditPlaceModal(${p.id})" class="text-slate-400 hover:text-teal-600 p-1 transition-all rounded-lg hover:bg-slate-50" title="Editar sitio">
+                                        <i class="fa-regular fa-pen-to-square text-xs"></i>
+                                    </button>
+                                    <button onclick="deleteCustomPlace(${p.id})" class="text-slate-300 hover:text-rose-600 p-1 transition-all">
+                                        <i class="fa-regular fa-trash-can text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <h4 class="text-xs font-bold text-slate-800">${p.name}</h4>
+                            <p class="text-[9px] text-slate-400 flex items-center gap-1 mt-0.5">
+                                <i class="fa-solid fa-location-dot"></i> ${p.loc}
+                            </p>
+                            <p class="text-[11px] text-slate-500 mt-2 bg-slate-50 p-2 rounded-lg italic leading-relaxed border border-slate-100">
+                                "${p.note}"
+                            </p>
+                        </div>
+                        <div class="mt-3.5 pt-2 border-t border-slate-50 flex items-center justify-between text-[9px] text-slate-400">
+                            <span>Valoración:</span>
+                            <span class="font-bold text-amber-500">${stars}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function speakWord(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'it-IT'; 
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showToast("Tu navegador no soporta síntesis de voz.", "error");
+            }
+        }
+
+        // Sincronización general del DOM con el estado
+        function updateAllViews() {
+            // 1. Dashboard de Datos
+            const totalSpent = state.expenses.reduce((sum, curr) => sum + curr.amount, 0);
+            document.getElementById('dash-spent').innerText = `${totalSpent.toFixed(2)} €`;
+            document.getElementById('dash-spent-lek').innerText = `~${Math.round(totalSpent * 95.45).toLocaleString('de-DE')} Leks`;
+            
+            const totalStops = state.itinerary.length;
+            document.getElementById('dash-stops').innerText = `${totalStops} Días`;
+
+            // Progreso del Equipaje
+            const totalItems = state.packing.length;
+            const checkedItems = state.packing.filter(i => i.checked).length;
+            const packingProgress = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
+            document.getElementById('dash-packing-progress').innerText = `${packingProgress}% Listo`;
+
+            // 2. Renderizar Línea de Tiempo del Itinerario
+            const timeline = document.getElementById('itinerary-timeline');
+            if(timeline) {
+                timeline.innerHTML = '';
+                state.itinerary.forEach((day, idx) => {
+                    timeline.innerHTML += `
+                        <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm relative flex gap-4 transition-all hover:border-slate-200">
+                            <div class="flex flex-col items-center">
+                                <div class="bg-teal-50 text-teal-700 h-10 w-10 rounded-full flex items-center justify-center font-extrabold text-sm border border-teal-200 shrink-0">
+                                    ${idx + 1}
+                                </div>
+                                ${idx < state.itinerary.length - 1 ? '<div class="w-0.5 bg-slate-100 flex-1 my-2"></div>' : ''}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start gap-2">
+                                    <h4 class="text-sm font-extrabold text-slate-900">${day.title}</h4>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="openEditDayModal(${day.id})" class="text-slate-400 hover:text-teal-600 transition-colors shrink-0" title="Editar este día">
+                                            <i class="fa-regular fa-pen-to-square text-xs"></i>
+                                        </button>
+                                        <button onclick="deleteDay(${day.id})" class="text-slate-300 hover:text-rose-600 transition-colors shrink-0">
+                                            <i class="fa-regular fa-trash-can text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-600 mt-2 leading-relaxed">${day.activities}</p>
+                                <div class="mt-3 pt-3 border-t border-slate-50 flex items-center gap-2 text-xs text-slate-500">
+                                    <i class="fa-solid fa-hotel text-teal-600/75"></i>
+                                    <span class="font-semibold text-slate-700">Alojamiento:</span> ${day.hotel}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // 3. Renderizar Presupuesto
+            const expensesTbody = document.getElementById('expenses-tbody');
+            if(expensesTbody) {
+                expensesTbody.innerHTML = '';
+                if (state.expenses.length === 0) {
+                    document.getElementById('no-expenses-msg').classList.remove('hidden');
+                } else {
+                    document.getElementById('no-expenses-msg').classList.add('hidden');
+                    state.expenses.forEach(ex => {
+                        expensesTbody.innerHTML += `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-3.5 pr-2 font-medium text-slate-900 text-xs">
+                                    <span class="bg-slate-100 px-2.5 py-1 rounded-full text-slate-700">${ex.category}</span>
+                                </td>
+                                <td class="py-3.5 px-2 text-slate-600 text-xs font-semibold">${ex.desc}</td>
+                                <td class="py-3.5 px-2 text-right text-slate-900 text-xs font-bold">${ex.amount.toFixed(2)} €</td>
+                                <td class="py-3.5 pl-2 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button onclick="openEditExpenseModal(${ex.id})" class="text-slate-400 hover:text-teal-600 transition-colors">
+                                            <i class="fa-regular fa-pen-to-square text-xs"></i>
+                                        </button>
+                                        <button onclick="deleteExpense(${ex.id})" class="text-slate-300 hover:text-rose-600 transition-colors">
+                                            <i class="fa-regular fa-trash-can text-xs"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+            }
+
+            const budgetBar = document.getElementById('budget-bar');
+            if(budgetBar) {
+                const percent = Math.min((totalSpent / 1000) * 100, 100);
+                budgetBar.style.width = `${percent}%`;
+                document.getElementById('budget-percentage').innerText = `${percent.toFixed(0)}% de 1000€`;
+            }
+
+            // 4. Renderizar Equipaje por Categorías
+            const listVital = document.getElementById('packing-vital');
+            const listClothing = document.getElementById('packing-clothing');
+            const listExtras = document.getElementById('packing-extras');
+
+            if(listVital && listClothing && listExtras) {
+                listVital.innerHTML = '';
+                listClothing.innerHTML = '';
+                listExtras.innerHTML = '';
+
+                state.packing.forEach(item => {
+                    const itemHTML = `
+                        <div class="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-white/80 transition-colors">
+                            <label class="flex items-center gap-2.5 cursor-pointer flex-1 min-w-0">
+                                <input type="checkbox" ${item.checked ? 'checked' : ''} onclick="togglePackingItem(${item.id})" class="rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 h-4 w-4">
+                                <span class="text-xs font-medium text-slate-700 truncate ${item.checked ? 'line-through text-slate-400' : ''}">${item.text}</span>
+                            </label>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button onclick="openEditPackingModal(${item.id})" class="text-slate-400 hover:text-teal-600 transition-colors">
+                                    <i class="fa-regular fa-pen-to-square text-[11px]"></i>
+                                </button>
+                                <button onclick="deletePackingItem(${item.id})" class="text-slate-300 hover:text-rose-600 transition-colors">
+                                    <i class="fa-solid fa-xmark text-[11px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    if (item.cat === 'vital') {
+                        listVital.innerHTML += itemHTML;
+                    } else if (item.cat === 'clothing') {
+                        listClothing.innerHTML += itemHTML;
+                    } else {
+                        listExtras.innerHTML += itemHTML;
+                    }
+                });
+            }
+
+            // 5. Rellenar campos de Documentación
+            const fOutAir = document.getElementById('doc-flight-out-airline');
+            if(fOutAir) {
+                document.getElementById('doc-flight-out-airline').value = state.documents.flightOutAirline || '';
+                document.getElementById('doc-flight-out-pnr').value = state.documents.flightOutPnr || '';
+                document.getElementById('doc-flight-out-datetime').value = state.documents.flightOutDatetime || '';
+                document.getElementById('doc-flight-out-seats').value = state.documents.flightOutSeats || '';
+
+                document.getElementById('doc-flight-ret-airline').value = state.documents.flightRetAirline || '';
+                document.getElementById('doc-flight-ret-pnr').value = state.documents.flightRetPnr || '';
+                document.getElementById('doc-flight-ret-datetime').value = state.documents.flightRetDatetime || '';
+                document.getElementById('doc-flight-ret-seats').value = state.documents.flightRetSeats || '';
+
+                document.getElementById('doc-ins-company').value = state.documents.insCompany || '';
+                document.getElementById('doc-ins-policy').value = state.documents.insPolicy || '';
+                document.getElementById('doc-ins-phone').value = state.documents.insPhone || '';
+                document.getElementById('doc-ins-status').value = state.documents.insStatus || 'No Contratado';
+                document.getElementById('doc-ins-notes').value = state.documents.insNotes || '';
+
+                document.getElementById('doc-car-company').value = state.documents.carCompany || '';
+                document.getElementById('doc-car-model').value = state.documents.carModel || '';
+                document.getElementById('doc-car-pickup').value = state.documents.carPickup || '';
+                document.getElementById('doc-car-dropoff').value = state.documents.carDropoff || '';
+                document.getElementById('doc-car-pnr').value = state.documents.carPnr || '';
+                document.getElementById('doc-car-price').value = state.documents.carPrice || '';
+                document.getElementById('doc-car-deposit').value = state.documents.carDeposit || '';
+
+                document.getElementById('doc-sim-provider').value = state.documents.simProvider || '';
+                document.getElementById('doc-sim-plan').value = state.documents.simPlan || '';
+                document.getElementById('doc-sim-status').value = state.documents.simStatus || 'No Comprado';
+                document.getElementById('doc-sim-price').value = state.documents.simPrice || '';
+                document.getElementById('doc-sim-steps').value = state.documents.simSteps || '';
+            }
+
+            renderDocHotels();
+            renderTownsList();
+            renderPlacesList();
+        }
+
+        window.onload = function() {
+            // Renderizar diccionario rápido
+            const phrasesGrid = document.getElementById('phrases-grid');
+            if(phrasesGrid) {
+                phrasesGrid.innerHTML = '';
+                phrases.forEach(p => {
+                    phrasesGrid.innerHTML += `
+                        <div class="bg-slate-50/70 border border-slate-100 p-4 rounded-xl flex items-center justify-between gap-4">
+                            <div>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Albanés</span>
+                                <h4 class="text-sm font-extrabold text-slate-900">${p.shqip}</h4>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Pronunciación aprox: <span class="font-bold italic text-slate-700">${p.pron}</span></p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-teal-50 text-teal-800 text-[10px] px-2 py-1 rounded font-bold">${p.esp}</span>
+                                <button onclick="speakWord('${p.shqip}')" class="bg-white border border-slate-200 text-slate-500 hover:text-teal-600 hover:border-teal-300 p-2.5 rounded-xl transition-all shadow-sm">
+                                    <i class="fa-solid fa-volume-high text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Calcular cuenta atrás del viaje (Salida de Santander: 6 de Agosto de 2026, 21:10)
+            const targetDate = new Date("2026-08-06T21:10:00").getTime();
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+            const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            
+            const countdownEl = document.getElementById('days-countdown');
+            if (countdownEl) {
+                if (daysLeft > 0) {
+                    countdownEl.innerHTML = `<span class="text-teal-600">¡Faltan ${daysLeft} días para el despegue!</span>`;
+                } else if (daysLeft === 0) {
+                    countdownEl.innerHTML = `<span class="text-emerald-600">¡Hoy comienza el viaje! ✈️</span>`;
+                } else if (daysLeft < 0 && daysLeft > -8) {
+                    countdownEl.innerHTML = `<span class="text-emerald-600">¡De aventura por Albania! 🦅</span>`;
+                } else {
+                    countdownEl.innerHTML = `<span class="text-slate-500">Viaje Realizado</span>`;
+                }
+            }
+
+            // Realizar un silent pull inicial si la auto-sincronización está activa
+            if (state.autoSync) {
+                downloadFromCloudSilent();
+            }
+
+            // Vista por defecto
+            switchTab('dashboard');
+            switchPlacesSubTab('pueblos');
+            updateAllViews();
+        };
+    </script>
+</body>
+</html>
