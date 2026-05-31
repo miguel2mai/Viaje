@@ -350,7 +350,36 @@
                     <!-- Los días se renderizarán aquí mediante JavaScript -->
                 </div>
             </section>
+<div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm lg:col-span-1 mt-6">
+    <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-dharmachakra text-purple-600"></i> ¿Quién paga este gasto?
+    </h3>
+    <div class="flex flex-col items-center gap-4">
+        <div id="roulette-result" class="text-2xl font-extrabold text-purple-700 min-h-[40px]">
+            ¡Gira la ruleta!
+        </div>
+        <button onclick="spinRoulette()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm py-3 rounded-xl transition-all shadow-md shadow-purple-600/10">
+            <i class="fa-solid fa-rotate-right"></i> ¡Girar!
+        </button>
+    </div>
+</div>
 
+<script>
+    function spinRoulette() {
+        const resultEl = document.getElementById('roulette-result');
+        const options = ["Miguel", "Marina"];
+        
+        // Efecto visual rápido
+        resultEl.classList.add('animate-pulse');
+        resultEl.innerText = "Girando...";
+        
+        setTimeout(() => {
+            const winner = options[Math.floor(Math.random() * options.length)];
+            resultEl.innerText = `¡Le toca a: ${winner}!`;
+            resultEl.classList.remove('animate-pulse');
+        }, 800);
+    }
+</script>
             <!-- VISTA PRESUPUESTO (EDITABLE) -->
             <section id="view-budget" class="tab-view fade-in hidden flex flex-col gap-6">
                 <!-- Panel de Gestión Presupuestaria -->
