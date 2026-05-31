@@ -74,10 +74,10 @@
 
                 <!-- Botones del Header (Sincronización y Cuenta atrás) -->
                 <div class="flex items-center gap-2 sm:gap-4">
-                    <!-- Botón Nube Sincronizar -->
-                    <button onclick="openSyncModal()" class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-2 rounded-xl text-xs font-bold border border-green-200/50 flex items-center gap-1.5 transition-all shadow-sm">
-                        <i class="fa-solid fa-table text-sm animate-pulse"></i>
-                        <span class="hidden sm:inline">Google Sheets</span>
+                    <!-- Botón Base de Datos -->
+                    <button onclick="openSyncModal()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-xl text-xs font-bold border border-blue-200/50 flex items-center gap-1.5 transition-all shadow-sm">
+                        <i class="fa-solid fa-database text-sm animate-pulse"></i>
+                        <span class="hidden sm:inline">Base de Datos</span>
                     </button>
                     
                     <div class="hidden md:flex items-center gap-4 bg-slate-50 border border-slate-100 p-1.5 rounded-xl text-sm">
@@ -1197,38 +1197,39 @@
             <div class="flex justify-between items-start">
                 <div>
                     <h3 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-cloud-arrow-up-down text-teal-600"></i>
+                        <i class="fa-solid fa-cloud-arrow-up-down text-blue-600"></i>
                         Sincronizar entre Móviles
                     </h3>
-                    <p class="text-xs text-slate-500 mt-1">Comparte y actualiza vuestro viaje a Albania en tiempo real en varios dispositivos usando Google Sheets.</p>
+                    <p class="text-xs text-slate-500 mt-1">Comparte y actualiza vuestro viaje a Albania en tiempo real en varios dispositivos.</p>
                 </div>
                 <button onclick="closeSyncModal()" class="text-slate-400 hover:text-slate-600 p-1">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <!-- Paso 1: Configurar Google Sheets Web App URL -->
-            <div class="bg-green-50/60 border border-green-100 p-4 rounded-2xl flex flex-col gap-3">
-                <h4 class="text-xs font-bold text-green-800 uppercase tracking-wider flex items-center gap-1.5">
-                    <i class="fa-solid fa-link"></i> 1. Enlace de tu Google Sheets (API Web App)
+            <!-- Paso 1: Configurar JSONBin -->
+            <div class="bg-blue-50/60 border border-blue-100 p-4 rounded-2xl flex flex-col gap-3">
+                <h4 class="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-database"></i> 1. Conexión a Base de Datos (JSONBin.io)
                 </h4>
-                <input type="text" id="google-sheets-url-input" onchange="updateGoogleSheetsUrl(this)" class="w-full text-xs bg-white p-2.5 rounded-xl border border-green-200 focus:outline-none" placeholder="Pega aquí tu URL de aplicación web que termina en /exec">
-                <p class="text-[10px] text-slate-500 leading-snug">
-                    Introduce el enlace proporcionado por Google Apps Script para sincronizar tus viajes directamente con tu hoja de cálculo.
-                </p>
-            </div>
-
-            <!-- Paso 2: Código de Sincronización (Oculto, ya no es necesario con la URL) -->
-            <div class="hidden bg-teal-50/60 border border-teal-100 p-4 rounded-2xl flex flex-col gap-3">
-                <h4 class="text-xs font-bold text-teal-800 uppercase tracking-wider">2. Código de Viaje Compartido</h4>
-                <div class="flex gap-2">
-                    <input type="text" id="sync-key-input" class="flex-1 text-center font-mono font-extrabold text-lg text-slate-800 bg-white p-2.5 rounded-xl border border-teal-200 focus:outline-none uppercase" placeholder="Ej. SHQIP-XYZ123">
+                <div class="grid grid-cols-1 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">BIN ID (Tu viaje)</label>
+                        <input type="text" id="jsonbin-id-input" onchange="updateJsonBinCredentials()" class="w-full text-xs font-mono bg-white p-2.5 rounded-xl border border-blue-200 focus:outline-none" placeholder="Ej. 64a8b...">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">X-Master-Key (Tu contraseña)</label>
+                        <input type="password" id="jsonbin-key-input" onchange="updateJsonBinCredentials()" class="w-full text-xs font-mono bg-white p-2.5 rounded-xl border border-blue-200 focus:outline-none" placeholder="Ej. $2b$10$...">
+                    </div>
                 </div>
+                <p class="text-[10px] text-slate-500 leading-snug">
+                    Crea una cuenta gratis en <a href="https://jsonbin.io" target="_blank" class="font-bold text-blue-600 underline">jsonbin.io</a>, crea un Bin nuevo vacío ({}) y pega aquí tus claves. Nunca fallará el CORS.
+                </p>
             </div>
 
             <!-- Botones de la nube -->
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="uploadToCloud()" class="bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                <button onclick="uploadToCloud()" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
                     Subir mis datos
                 </button>
@@ -1240,7 +1241,7 @@
 
             <!-- Auto-sync -->
             <label class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 cursor-pointer">
-                <input type="checkbox" id="auto-sync-check" onchange="toggleAutoSync(this)" class="rounded border-slate-300 text-teal-600 focus:ring-teal-500 h-4 w-4">
+                <input type="checkbox" id="auto-sync-check" onchange="toggleAutoSync(this)" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4">
                 <div>
                     <p class="text-xs font-bold text-slate-800">Auto-Sincronización Inteligente (Recomendado)</p>
                     <p class="text-[10px] text-slate-500">Descarga cambios al abrir la app y sube tus modificaciones al instante en segundo plano.</p>
@@ -1417,13 +1418,7 @@
             { shqip: "Gëzuar!", pron: "Guezuar!", esp: "¡Salud!" }
         ];
 
-        // Determinar URL Guardada o Aplicar la de por defecto
-        let savedUrl = localStorage.getItem('albania_google_sheets_url');
-        if (!savedUrl || savedUrl.trim() === '') {
-            savedUrl = 'https://script.google.com/macros/s/AKfycbzoPmL7fb6RbvATbwtr1xHjyfLkEDyUsF-YLRWI1e2zcwe8mH2NxQmL5KvDYtmdK-Aw5A/exec';
-        }
-
-        // Inicializar Estado
+        // Inicializar Estado con JSONBin variables
         let state = {
             itinerary: JSON.parse(localStorage.getItem('albania_itinerary')) || defaultItinerary,
             expenses: JSON.parse(localStorage.getItem('albania_expenses')) || defaultExpenses,
@@ -1431,21 +1426,12 @@
             documents: JSON.parse(localStorage.getItem('albania_documents')) || defaultDocuments,
             towns: JSON.parse(localStorage.getItem('albania_towns')) || defaultTowns,
             places: JSON.parse(localStorage.getItem('albania_places')) || defaultPlaces,
-            syncKey: localStorage.getItem('albania_sync_key') || generateDefaultSyncKey(),
             autoSync: JSON.parse(localStorage.getItem('albania_auto_sync')) || false,
-            googleSheetsUrl: savedUrl
+            jsonbinId: localStorage.getItem('albania_jsonbin_id') || '',
+            jsonbinKey: localStorage.getItem('albania_jsonbin_key') || ''
         };
 
         let activePlacesFilter = 'Todos';
-
-        function generateDefaultSyncKey() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let code = 'SHQIP-';
-            for (let i = 0; i < 5; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return code;
-        }
 
         // Guardar estado local
         function saveState() {
@@ -1455,9 +1441,9 @@
             localStorage.setItem('albania_documents', JSON.stringify(state.documents));
             localStorage.setItem('albania_towns', JSON.stringify(state.towns));
             localStorage.setItem('albania_places', JSON.stringify(state.places));
-            localStorage.setItem('albania_sync_key', state.syncKey);
             localStorage.setItem('albania_auto_sync', JSON.stringify(state.autoSync));
-            localStorage.setItem('albania_google_sheets_url', state.googleSheetsUrl);
+            localStorage.setItem('albania_jsonbin_id', state.jsonbinId);
+            localStorage.setItem('albania_jsonbin_key', state.jsonbinKey);
             
             updateAllViews();
 
@@ -1466,10 +1452,11 @@
             }
         }
 
-        function updateGoogleSheetsUrl(input) {
-            state.googleSheetsUrl = input.value.trim();
+        function updateJsonBinCredentials() {
+            state.jsonbinId = document.getElementById('jsonbin-id-input').value.trim();
+            state.jsonbinKey = document.getElementById('jsonbin-key-input').value.trim();
             saveState();
-            showToast("Enlace de Google Sheets guardado.");
+            showToast("Claves de Base de Datos guardadas.");
         }
 
         function switchTab(tabId) {
@@ -1551,10 +1538,11 @@
             }, 400);
         }
 
-        // APARTADO CLOUD SYNC (SOPORTADO POR GOOGLE SHEETS)
+        // APARTADO CLOUD SYNC: AHORA CON JSONBIN.IO (100% Sin Errores CORS)
         function openSyncModal() {
             document.getElementById('auto-sync-check').checked = state.autoSync;
-            document.getElementById('google-sheets-url-input').value = state.googleSheetsUrl;
+            document.getElementById('jsonbin-id-input').value = state.jsonbinId;
+            document.getElementById('jsonbin-key-input').value = state.jsonbinKey;
             document.getElementById('sync-modal').classList.remove('hidden');
             exportManual();
         }
@@ -1563,52 +1551,42 @@
             document.getElementById('sync-modal').classList.add('hidden');
         }
 
-        function generateNewSyncCode() {
-            const nextKey = generateDefaultSyncKey();
-            state.syncKey = nextKey;
-            document.getElementById('sync-key-input').value = nextKey;
-            saveState();
-            showToast("Nuevo código generado de forma local.");
-        }
-
-        function copySyncCode() {
-            const input = document.getElementById('sync-key-input');
-            input.select();
-            document.execCommand('copy');
-            showToast("¡Código copiado!");
-        }
-
         async function uploadToCloud() {
-            if (!state.googleSheetsUrl) {
-                showToast("Configura primero tu enlace de Google Sheets arriba", "error");
+            if (!state.jsonbinId || !state.jsonbinKey) {
+                showToast("Configura primero tu Bin ID y Master Key", "error");
                 return;
             }
             try {
-                showToast("Subiendo información a tu Google Sheets...");
+                showToast("Subiendo información a la base de datos...");
                 
-                // Usando mode 'no-cors' y cabecera 'text/plain' evitamos el error CORS de Google Apps Script.
-                await fetch(state.googleSheetsUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${state.jsonbinId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': state.jsonbinKey
+                    },
                     body: JSON.stringify(state)
                 });
                 
-                showToast("¡Datos sincronizados en tu Google Sheets!");
+                if (!response.ok) throw new Error("Error en la subida. Comprueba tus credenciales.");
+                
+                showToast("¡Datos sincronizados en JSONBin!");
                 saveState();
             } catch (err) {
                 console.error(err);
-                showToast("Error al conectar con Google Sheets.", "error");
+                showToast("Error de conexión. Revisa las claves de JSONBin.", "error");
             }
         }
 
         async function uploadToCloudSilent() {
-            if (!state.googleSheetsUrl) return;
+            if (!state.jsonbinId || !state.jsonbinKey) return;
             try {
-                await fetch(state.googleSheetsUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                await fetch(`https://api.jsonbin.io/v3/b/${state.jsonbinId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': state.jsonbinKey
+                    },
                     body: JSON.stringify(state)
                 });
             } catch (err) {
@@ -1617,19 +1595,24 @@
         }
 
         async function downloadFromCloud() {
-            if (!state.googleSheetsUrl) {
-                showToast("Configura primero tu enlace de Google Sheets arriba", "error");
+            if (!state.jsonbinId || !state.jsonbinKey) {
+                showToast("Configura primero tu Bin ID y Master Key", "error");
                 return;
             }
             try {
-                showToast("Descargando datos desde Google Sheets...");
-                // Para las descargas (GET) el CORS está permitido por Apps Script.
-                const response = await fetch(state.googleSheetsUrl, {
-                    method: 'GET',
-                    mode: 'cors'
-                });
+                showToast("Descargando datos desde la nube...");
                 
-                const cloudData = await response.json();
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${state.jsonbinId}/latest`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Master-Key': state.jsonbinKey
+                    }
+                });
+
+                if (!response.ok) throw new Error("Error al descargar. ¿Son correctas las claves?");
+                
+                const data = await response.json();
+                const cloudData = data.record;
                 
                 if (cloudData && Object.keys(cloudData).length > 0) {
                     state.itinerary = cloudData.itinerary || state.itinerary;
@@ -1648,19 +1631,22 @@
                 }
             } catch (err) {
                 console.error(err);
-                showToast("Error al descargar datos de Google Sheets.", "error");
+                showToast("Error al descargar datos de JSONBin.", "error");
             }
         }
 
         async function downloadFromCloudSilent() {
-            if (!state.googleSheetsUrl) return;
+            if (!state.jsonbinId || !state.jsonbinKey) return;
             try {
-                const response = await fetch(state.googleSheetsUrl, {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${state.jsonbinId}/latest`, {
                     method: 'GET',
-                    mode: 'cors'
+                    headers: {
+                        'X-Master-Key': state.jsonbinKey
+                    }
                 });
                 if (response.ok) {
-                    const cloudData = await response.json();
+                    const data = await response.json();
+                    const cloudData = data.record;
                     if (cloudData && Object.keys(cloudData).length > 0) {
                         state.itinerary = cloudData.itinerary || state.itinerary;
                         state.expenses = cloudData.expenses || state.expenses;
