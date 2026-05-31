@@ -52,6 +52,14 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes spin-effect {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2) rotate(10deg); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.spinning {
+    animation: spin-effect 0.2s infinite;
+}
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-16 md:pb-0">
@@ -352,32 +360,44 @@
             </section>
 <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm lg:col-span-1 mt-6">
     <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-dharmachakra text-purple-600"></i> ¿Quién paga este gasto?
+        <i class="fa-solid fa-dharmachakra text-purple-600"></i> ¿Quién paga hoy?
     </h3>
+    
     <div class="flex flex-col items-center gap-4">
-        <div id="roulette-result" class="text-2xl font-extrabold text-purple-700 min-h-[40px]">
-            ¡Gira la ruleta!
+        <!-- Pantalla donde se visualiza el giro -->
+        <div id="roulette-display" class="text-3xl font-black text-purple-700 h-16 flex items-center justify-center">
+            Listo
         </div>
-        <button onclick="spinRoulette()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm py-3 rounded-xl transition-all shadow-md shadow-purple-600/10">
-            <i class="fa-solid fa-rotate-right"></i> ¡Girar!
+        
+        <button id="btn-spin" onclick="startSpin()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all">
+            ¡Girar Ruleta!
         </button>
     </div>
 </div>
 
 <script>
-    function spinRoulette() {
-        const resultEl = document.getElementById('roulette-result');
+    function startSpin() {
+        const display = document.getElementById('roulette-display');
+        const btn = document.getElementById('btn-spin');
         const options = ["Miguel", "Marina"];
+        let counter = 0;
         
-        // Efecto visual rápido
-        resultEl.classList.add('animate-pulse');
-        resultEl.innerText = "Girando...";
+        btn.disabled = true;
+        display.classList.add('spinning');
+        
+        // Efecto visual: cambia nombres rápidamente durante 1.5 segundos
+        const interval = setInterval(() => {
+            display.innerText = options[counter % options.length];
+            counter++;
+        }, 100);
         
         setTimeout(() => {
+            clearInterval(interval);
+            display.classList.remove('spinning');
             const winner = options[Math.floor(Math.random() * options.length)];
-            resultEl.innerText = `¡Le toca a: ${winner}!`;
-            resultEl.classList.remove('animate-pulse');
-        }, 800);
+            display.innerText = winner;
+            btn.disabled = false;
+        }, 1500);
     }
 </script>
             <!-- VISTA PRESUPUESTO (EDITABLE) -->
