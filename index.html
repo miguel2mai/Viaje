@@ -252,34 +252,36 @@
                                     </filter>
                                 </defs>
 
-                                <g filter="url(#realMapShadow)">
-                                    <use href="#albaniaOutline" fill="#ffffff"/>
-                                    <g clip-path="url(#albaniaClip)" stroke="#ffffff" stroke-width="4" stroke-linejoin="round">
-                                        <g class="cursor-pointer" onclick="showMapPoint('Interior hist&oacute;rico', 'Zona central e interior: Berat, Gjirokast&euml;r, castillos, ciudades hist&oacute;ricas y carretera panor&aacute;mica.')">
-                                            <path d="M78 18 H335 V492 H78 Z" fill="#f59e0b"/>
+                                <g transform="translate(32 8) scale(0.78)">
+                                    <g filter="url(#realMapShadow)">
+                                        <use href="#albaniaOutline" fill="#ffffff"/>
+                                        <g clip-path="url(#albaniaClip)" stroke="#ffffff" stroke-width="4" stroke-linejoin="round">
+                                            <g class="cursor-pointer" onclick="showMapPoint('Interior hist&oacute;rico', 'Zona central e interior: Berat, Gjirokast&euml;r, castillos, ciudades hist&oacute;ricas y carretera panor&aacute;mica.')">
+                                                <path d="M78 18 H335 V492 H78 Z" fill="#f59e0b"/>
+                                            </g>
+                                            <g class="cursor-pointer" onclick="showMapPoint('Alpes albaneses', 'Zona norte de monta&ntilde;a: valles alpinos, pueblos como Theth y paisajes de senderismo.')">
+                                                <path d="M96 18 H311 V151 C280 160, 244 163, 211 154 C174 144, 137 137, 102 147 Z" fill="#16a34a"/>
+                                            </g>
+                                            <g class="cursor-pointer" onclick="showMapPoint('Costa adri&aacute;tica', 'Franja oeste y noroeste: costa adri&aacute;tica, accesos desde el norte y zonas de playa m&aacute;s tranquilas.')">
+                                                <path d="M82 145 C108 137, 136 143, 155 158 C140 193, 121 226, 92 253 C79 222, 92 188, 82 145 Z" fill="#0ea5e9"/>
+                                            </g>
+                                            <g class="cursor-pointer" onclick="showMapPoint('Riviera albanesa', 'Costa sur y Riviera: Himar&euml;, Gjipe, Sarand&euml;, Ksamil y playas del J&oacute;nico.')">
+                                                <path d="M91 283 C112 297, 127 319, 130 348 C134 381, 147 410, 166 438 C151 454, 128 456, 109 438 C86 416, 78 380, 82 344 C85 319, 78 300, 91 283 Z" fill="#0891b2"/>
+                                            </g>
+                                            <g class="cursor-pointer" onclick="showMapPoint('Sur y Butrinto', 'Extremo sur: Sarand&euml;, Ksamil, Butrinto y conexi&oacute;n visual con Corf&uacute;.')">
+                                                <path d="M151 421 C172 442, 194 470, 224 470 C207 485, 178 483, 158 462 C148 451, 145 434, 151 421 Z" fill="#7c3aed"/>
+                                            </g>
+                                            <g class="cursor-pointer" onclick="showMapPoint('Capital', '&Aacute;rea de Tirana: llegada al aeropuerto, base log&iacute;stica y &uacute;ltima noche antes del regreso.')">
+                                                <path d="M146 159 C171 149, 208 154, 231 173 C249 188, 251 215, 234 235 C214 257, 176 258, 151 239 C128 221, 124 178, 146 159 Z" fill="#dc2626"/>
+                                            </g>
                                         </g>
-                                        <g class="cursor-pointer" onclick="showMapPoint('Alpes albaneses', 'Zona norte de monta&ntilde;a: valles alpinos, pueblos como Theth y paisajes de senderismo.')">
-                                            <path d="M96 18 H311 V151 C280 160, 244 163, 211 154 C174 144, 137 137, 102 147 Z" fill="#16a34a"/>
-                                        </g>
-                                        <g class="cursor-pointer" onclick="showMapPoint('Costa adri&aacute;tica', 'Franja oeste y noroeste: costa adri&aacute;tica, accesos desde el norte y zonas de playa m&aacute;s tranquilas.')">
-                                            <path d="M82 145 C108 137, 136 143, 155 158 C140 193, 121 226, 92 253 C79 222, 92 188, 82 145 Z" fill="#0ea5e9"/>
-                                        </g>
-                                        <g class="cursor-pointer" onclick="showMapPoint('Riviera albanesa', 'Costa sur y Riviera: Himar&euml;, Gjipe, Sarand&euml;, Ksamil y playas del J&oacute;nico.')">
-                                            <path d="M91 283 C112 297, 127 319, 130 348 C134 381, 147 410, 166 438 C151 454, 128 456, 109 438 C86 416, 78 380, 82 344 C85 319, 78 300, 91 283 Z" fill="#0891b2"/>
-                                        </g>
-                                        <g class="cursor-pointer" onclick="showMapPoint('Sur y Butrinto', 'Extremo sur: Sarand&euml;, Ksamil, Butrinto y conexi&oacute;n visual con Corf&uacute;.')">
-                                            <path d="M151 421 C172 442, 194 470, 224 470 C207 485, 178 483, 158 462 C148 451, 145 434, 151 421 Z" fill="#7c3aed"/>
-                                        </g>
-                                        <g class="cursor-pointer" onclick="showMapPoint('Capital', '&Aacute;rea de Tirana: llegada al aeropuerto, base log&iacute;stica y &uacute;ltima noche antes del regreso.')">
-                                            <path d="M146 159 C171 149, 208 154, 231 173 C249 188, 251 215, 234 235 C214 257, 176 258, 151 239 C128 221, 124 178, 146 159 Z" fill="#dc2626"/>
-                                        </g>
+                                        <use href="#albaniaOutline" fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linejoin="round"/>
                                     </g>
-                                    <use href="#albaniaOutline" fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linejoin="round"/>
-                                </g>
 
-                                <path d="M112 127 C101 170, 108 210, 93 251 C76 298, 83 360, 116 415 C128 435, 142 453, 153 458" stroke="#0f172a" stroke-width="2" stroke-dasharray="5 7" opacity="0.32"/>
-                                <circle cx="184" cy="205" r="7" fill="#ffffff" stroke="#dc2626" stroke-width="4"/>
-                                <text x="197" y="209" fill="#111827" font-size="13" font-weight="900">Tirana</text>
+                                    <path d="M112 127 C101 170, 108 210, 93 251 C76 298, 83 360, 116 415 C128 435, 142 453, 153 458" stroke="#0f172a" stroke-width="2" stroke-dasharray="5 7" opacity="0.32"/>
+                                    <circle cx="184" cy="205" r="7" fill="#ffffff" stroke="#dc2626" stroke-width="4"/>
+                                    <text x="197" y="209" fill="#111827" font-size="13" font-weight="900">Tirana</text>
+                                </g>
 
                                 <g transform="translate(270 52)">
                                     <rect width="108" height="178" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
