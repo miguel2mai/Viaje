@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -51,15 +51,40 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }        .payer-wheel {
+            background: conic-gradient(
+                #0f766e 0deg 22.5deg,
+                #e11d48 22.5deg 45deg,
+                #14b8a6 45deg 67.5deg,
+                #f43f5e 67.5deg 90deg,
+                #0f766e 90deg 112.5deg,
+                #e11d48 112.5deg 135deg,
+                #14b8a6 135deg 157.5deg,
+                #f43f5e 157.5deg 180deg,
+                #0f766e 180deg 202.5deg,
+                #e11d48 202.5deg 225deg,
+                #14b8a6 225deg 247.5deg,
+                #f43f5e 247.5deg 270deg,
+                #0f766e 270deg 292.5deg,
+                #e11d48 292.5deg 315deg,
+                #14b8a6 315deg 337.5deg,
+                #f43f5e 337.5deg 360deg
+            );
+            transition: transform 3.6s cubic-bezier(0.12, 0.72, 0.18, 1);
         }
-        @keyframes spin-effect {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2) rotate(10deg); opacity: 0.5; }
-    100% { transform: scale(1); opacity: 1; }
-}
-.spinning {
-    animation: spin-effect 0.2s infinite;
-}
+        .payer-wheel-label {
+            position: absolute;
+            inset: 50% auto auto 50%;
+            width: 50%;
+            transform-origin: left center;
+            color: white;
+            font-size: 9px;
+            font-weight: 800;
+            text-align: right;
+            padding-right: 12px;
+            text-shadow: 0 1px 2px rgba(15, 23, 42, 0.45);
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-16 md:pb-0">
@@ -358,48 +383,7 @@
                     <!-- Los días se renderizarán aquí mediante JavaScript -->
                 </div>
             </section>
-<div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm lg:col-span-1 mt-6">
-    <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-dharmachakra text-purple-600"></i> ¿Quién paga hoy?
-    </h3>
-    
-    <div class="flex flex-col items-center gap-4">
-        <!-- Pantalla donde se visualiza el giro -->
-        <div id="roulette-display" class="text-3xl font-black text-purple-700 h-16 flex items-center justify-center">
-            Listo
-        </div>
-        
-        <button id="btn-spin" onclick="startSpin()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all">
-            ¡Girar Ruleta!
-        </button>
-    </div>
-</div>
 
-<script>
-    function startSpin() {
-        const display = document.getElementById('roulette-display');
-        const btn = document.getElementById('btn-spin');
-        const options = ["Miguel", "Marina"];
-        let counter = 0;
-        
-        btn.disabled = true;
-        display.classList.add('spinning');
-        
-        // Efecto visual: cambia nombres rápidamente durante 1.5 segundos
-        const interval = setInterval(() => {
-            display.innerText = options[counter % options.length];
-            counter++;
-        }, 100);
-        
-        setTimeout(() => {
-            clearInterval(interval);
-            display.classList.remove('spinning');
-            const winner = options[Math.floor(Math.random() * options.length)];
-            display.innerText = winner;
-            btn.disabled = false;
-        }, 1500);
-    }
-</script>
             <!-- VISTA PRESUPUESTO (EDITABLE) -->
             <section id="view-budget" class="tab-view fade-in hidden flex flex-col gap-6">
                 <!-- Panel de Gestión Presupuestaria -->
@@ -439,6 +423,43 @@
                             </button>
                         </form>
 
+
+                        <!-- Ruleta de Pago -->
+                        <div class="mt-6 pt-6 border-t border-slate-100">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Ruleta de Pago</h4>
+                            <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col items-center gap-4 overflow-hidden">
+                                <div class="relative w-44 h-44">
+                                    <div class="absolute -top-1 left-1/2 -translate-x-1/2 z-10 text-amber-500 drop-shadow-sm">
+                                        <i class="fa-solid fa-location-pin text-2xl"></i>
+                                    </div>
+                                    <div id="payer-wheel" class="payer-wheel w-full h-full rounded-full border-[10px] border-white shadow-inner relative overflow-hidden">
+                                        <span class="payer-wheel-label" style="transform: rotate(11.25deg) translateY(-50%);">Miguel</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(33.75deg) translateY(-50%);">Marina</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(56.25deg) translateY(-50%);">Miguel</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(78.75deg) translateY(-50%);">Marina</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(101.25deg) translateY(-50%);">Miguel</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(123.75deg) translateY(-50%);">Marina</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(146.25deg) translateY(-50%);">Miguel</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(168.75deg) translateY(-50%);">Marina</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(191.25deg) translateY(-50%);">Miguel</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(213.75deg) translateY(-50%);">Marina</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(236.25deg) translateY(-50%);">Miguel</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(258.75deg) translateY(-50%);">Marina</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(281.25deg) translateY(-50%);">Miguel</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(303.75deg) translateY(-50%);">Marina</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(326.25deg) translateY(-50%);">Miguel</span>
+                                        <span class="payer-wheel-label" style="transform: rotate(348.75deg) translateY(-50%);">Marina</span>
+                                        <div class="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full border border-slate-200 shadow-sm flex items-center justify-center">
+                                            <i class="fa-solid fa-euro-sign text-slate-700"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="spinPayerWheel()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm py-3 rounded-xl transition-all shadow-md shadow-slate-900/10 flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-rotate"></i> Girar ruleta
+                                </button>
+                                <p id="payer-wheel-result" class="text-sm font-extrabold text-slate-900 min-h-[1.25rem] text-center">¿Quién paga este gasto?</p>
+                            </div>
+                        </div>
                         <!-- Conversor de Divisa -->
                         <div class="mt-6 pt-6 border-t border-slate-100">
                             <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Conversor Rápido (Lek / EUR)</h4>
@@ -1891,6 +1912,26 @@
                     eurInput.value = '';
                 }
             }
+        }
+        let payerWheelRotation = 0;
+        function spinPayerWheel() {
+            const wheel = document.getElementById('payer-wheel');
+            const result = document.getElementById('payer-wheel-result');
+            if (!wheel || !result) return;
+
+            const segmentIndex = Math.floor(Math.random() * 16);
+            const payer = segmentIndex % 2 === 0 ? 'Miguel' : 'Marina';
+            const segmentCenter = (segmentIndex * 22.5) + 11.25;
+            const targetRotation = 270 - segmentCenter;
+            const extraSpins = 1440 + (Math.floor(Math.random() * 4) * 360);
+            payerWheelRotation += extraSpins + targetRotation - (payerWheelRotation % 360);
+
+            result.innerText = 'Girando...';
+            wheel.style.transform = `rotate(${payerWheelRotation}deg)`;
+
+            setTimeout(() => {
+                result.innerText = `Paga ${payer}`;
+            }, 3650);
         }
 
         function openAddDayModal() {
