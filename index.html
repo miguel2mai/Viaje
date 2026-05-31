@@ -75,9 +75,9 @@
                 <!-- Botones del Header (Sincronización y Cuenta atrás) -->
                 <div class="flex items-center gap-2 sm:gap-4">
                     <!-- Botón Nube Sincronizar -->
-                    <button onclick="openSyncModal()" class="bg-teal-50 hover:bg-teal-100 text-teal-700 px-3 py-2 rounded-xl text-xs font-bold border border-teal-200/50 flex items-center gap-1.5 transition-all shadow-sm">
-                        <i class="fa-solid fa-cloud-arrow-up-down text-sm animate-pulse"></i>
-                        <span class="hidden sm:inline">Sincronizar móvil</span>
+                    <button onclick="openSyncModal()" class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-2 rounded-xl text-xs font-bold border border-green-200/50 flex items-center gap-1.5 transition-all shadow-sm">
+                        <i class="fa-solid fa-table text-sm animate-pulse"></i>
+                        <span class="hidden sm:inline">Google Sheets</span>
                     </button>
                     
                     <div class="hidden md:flex items-center gap-4 bg-slate-50 border border-slate-100 p-1.5 rounded-xl text-sm">
@@ -104,13 +104,7 @@
                 <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
                     <i class="fa-solid fa-chart-pie text-lg"></i> Dashboard
                 </button>
-                <!-- Botón de Sincronización con Google Sheets -->
-<button id="btn-sync-sheets" onclick="sincronizarConGoogleSheets()" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-xl hover:bg-green-700 transition-all shadow-sm">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18"></path>
-    </svg>
-    <span>Sincronizar con Google Sheets</span>
-</button>
+                
                 <button onclick="switchTab('itinerary')" id="btn-tab-itinerary" class="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
                     <i class="fa-solid fa-route text-lg"></i> Itinerario Diario
                 </button>
@@ -834,62 +828,6 @@
                     
                     <!-- Sub-pestañas de navegación -->
                     <div class="flex bg-slate-50 p-1">
-                        // ========================================================
-// CONFIGURACIÓN Y CONEXIÓN CON GOOGLE SHEETS VIA WEB APP
-// ========================================================
-
-// REMPLAZA ESTA URL con el enlace que te da Google Apps Script al publicar como Web App
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzoPmL7fb6RbvATbwtr1xHjyfLkEDyUsF-YLRWI1e2zcwe8mH2NxQmL5KvDYtmdK-Aw5A/exec";
-
-async function sincronizarConGoogleSheets() {
-    const btn = document.getElementById('btn-sync-sheets');
-    if (!btn) return;
-
-    // Cambiar estado del botón para mostrar que está cargando
-    const originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = `
-        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <span>Sincronizando...</span>
-    `;
-
-    // Recopilar los datos actuales de tu aplicación (itinerario, gastos, maleta...)
-    // Asegúrate de que 'state' o la variable que use tu app tenga este nombre
-    const datosAEnviar = {
-        action: "updateData",
-        payload: typeof state !== 'undefined' ? state : {} 
-    };
-
-    try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8" // Evita problemas de CORS con Apps Script
-            },
-            body: JSON.stringify(datosAEnviar)
-        });
-
-        const resultado = await response.json();
-
-        if (resultado.status === "success") {
-            alert("¡Sincronización con Google Sheets completada con éxito! 🟢");
-        } else {
-            throw new Error(resultado.message || "Error desconocido");
-        }
-
-    } catch (error) {
-        console.error("Error en la sincronización:", error);
-        alert("Hubo un fallo al conectar con Google Sheets. Revisa la consola.");
-    } finally {
-        // Restaurar el botón a su estado original
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-    }
-}
                         <button onclick="switchPlacesSubTab('pueblos')" id="btn-sub-pueblos" class="flex-1 py-3 text-xs sm:text-sm font-bold text-center rounded-xl transition-all flex items-center justify-center gap-2 text-teal-700 bg-white shadow-sm border border-slate-200/50">
                             <i class="fa-solid fa-house-chimney"></i> 🏡 Pueblos que Ver
                         </button>
@@ -1262,44 +1200,45 @@ async function sincronizarConGoogleSheets() {
                         <i class="fa-solid fa-cloud-arrow-up-down text-teal-600"></i>
                         Sincronizar entre Móviles
                     </h3>
-                    <p class="text-xs text-slate-500 mt-1">Comparte y actualiza vuestro viaje a Albania en tiempo real en varios dispositivos.</p>
+                    <p class="text-xs text-slate-500 mt-1">Comparte y actualiza vuestro viaje a Albania en tiempo real en varios dispositivos usando Google Sheets.</p>
                 </div>
                 <button onclick="closeSyncModal()" class="text-slate-400 hover:text-slate-600 p-1">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <!-- Sección 1: Código de Sincronización -->
-            <div class="bg-teal-50/60 border border-teal-100 p-4 rounded-2xl flex flex-col gap-3">
-                <h4 class="text-xs font-bold text-teal-800 uppercase tracking-wider">Paso 1: Vuestro Código de Viaje Compartido</h4>
-                <div class="flex gap-2">
-                    <input type="text" id="sync-key-input" class="flex-1 text-center font-mono font-extrabold text-lg text-slate-800 bg-white p-2.5 rounded-xl border border-teal-200 focus:outline-none uppercase" placeholder="Ej. SHQIP-XYZ123">
-                    <button onclick="copySyncCode()" class="bg-white border border-teal-200 hover:bg-teal-100 text-teal-800 p-2.5 rounded-xl transition-all flex items-center justify-center" title="Copiar código">
-                        <i class="fa-regular fa-copy"></i>
-                    </button>
-                    <button onclick="generateNewSyncCode()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold px-3 rounded-xl transition-all" title="Generar nuevo código">
-                        Nuevo
-                    </button>
-                </div>
+            <!-- Paso 1: Configurar Google Sheets Web App URL -->
+            <div class="bg-green-50/60 border border-green-100 p-4 rounded-2xl flex flex-col gap-3">
+                <h4 class="text-xs font-bold text-green-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-link"></i> 1. Enlace de tu Google Sheets (API Web App)
+                </h4>
+                <input type="text" id="google-sheets-url-input" onchange="updateGoogleSheetsUrl(this)" class="w-full text-xs bg-white p-2.5 rounded-xl border border-green-200 focus:outline-none" placeholder="Pega aquí tu URL de aplicación web que termina en /exec">
                 <p class="text-[10px] text-slate-500 leading-snug">
-                    <i class="fa-solid fa-triangle-exclamation text-teal-600"></i> 
-                    Ambos móviles debéis tener exactamente el <strong>mismo código</strong> introducido arriba para poder compartir los datos de vuestra aventura.
+                    Introduce el enlace proporcionado por Google Apps Script para sincronizar tus viajes directamente con tu hoja de cálculo.
                 </p>
             </div>
 
-            <!-- Sección 2: Acciones de la nube -->
+            <!-- Paso 2: Código de Sincronización (Oculto, ya no es necesario con la URL) -->
+            <div class="hidden bg-teal-50/60 border border-teal-100 p-4 rounded-2xl flex flex-col gap-3">
+                <h4 class="text-xs font-bold text-teal-800 uppercase tracking-wider">2. Código de Viaje Compartido</h4>
+                <div class="flex gap-2">
+                    <input type="text" id="sync-key-input" class="flex-1 text-center font-mono font-extrabold text-lg text-slate-800 bg-white p-2.5 rounded-xl border border-teal-200 focus:outline-none uppercase" placeholder="Ej. SHQIP-XYZ123">
+                </div>
+            </div>
+
+            <!-- Botones de la nube -->
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="uploadToCloud()" class="bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
-                    1. Subir mis datos
+                    Subir mis datos
                 </button>
                 <button onclick="downloadFromCloud()" class="bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cloud-arrow-down text-sm"></i>
-                    2. Descargar y Vincular
+                    Descargar y Vincular
                 </button>
             </div>
 
-            <!-- Configuración Auto-sync -->
+            <!-- Auto-sync -->
             <label class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 cursor-pointer">
                 <input type="checkbox" id="auto-sync-check" onchange="toggleAutoSync(this)" class="rounded border-slate-300 text-teal-600 focus:ring-teal-500 h-4 w-4">
                 <div>
@@ -1311,14 +1250,14 @@ async function sincronizarConGoogleSheets() {
             <!-- Separador -->
             <div class="relative flex py-2 items-center">
                 <div class="flex-grow border-t border-slate-100"></div>
-                <span class="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase">O comparte sin internet (Offline)</span>
+                <span class="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase">Compartir sin internet (Offline)</span>
                 <div class="flex-grow border-t border-slate-100"></div>
             </div>
 
-            <!-- Sección 3: Manual Export/Import -->
+            <!-- Manual Export/Import -->
             <div class="flex flex-col gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
                 <p class="text-[10px] text-slate-500 leading-normal">
-                    ¿No tenéis conexión a internet? Podéis exportar vuestro viaje en un código de texto Base64 cifrado para enviarlo por WhatsApp.
+                    ¿No tenéis conexión a internet? Podéis exportar vuestro viaje en un código de texto Base64 para enviarlo por WhatsApp.
                 </p>
                 <textarea id="manual-sync-text" rows="2" placeholder="El código de respaldo aparecerá aquí..." class="w-full text-[9px] font-mono p-2 rounded-lg border border-slate-200 focus:outline-none bg-white custom-scroll"></textarea>
                 <div class="grid grid-cols-2 gap-2 mt-1">
@@ -1459,7 +1398,7 @@ async function sincronizarConGoogleSheets() {
             { id: 1, name: "Oda Traditional Tavern", cat: "Restaurantes", loc: "Tirana", note: "Sabroso cordero asado y fërgesë dentro de una clásica vivienda otomana muy popular.", rating: 5 },
             { id: 2, name: "Mangalemi Restaurant", cat: "Restaurantes", loc: "Berat", note: "Disfruta de una cena con vistas a las ventanas iluminadas de Mangalem. El Tavë Kosi es de 10.", rating: 5 },
             { id: 3, name: "Taverna Lazaro", cat: "Restaurantes", loc: "Sarandë", note: "Marisco fresquísimo al mejor precio de la costa jónica.", rating: 4 },
-            { id: 4, name: "Radio Bar", cat: "Ocio", loc: "Tirana (Blloku)", note: "Copas increíbles en un patio cubierto lleno de radios retro y decoración comunista.", rating: 5 },
+            { id: 4, name: "Radio Bar", pre: "Ocio", loc: "Tirana (Blloku)", note: "Copas increíbles en un patio cubierto lleno de radios retro y decoración comunista.", rating: 5 },
             { id: 5, name: "La Brisa Beach Bar", cat: "Ocio", loc: "Himarë", note: "Relajante bar de playa con pufs, ideal para tomar un cóctel al atardecer.", rating: 4 },
             { id: 6, name: "Manantial Syri i Kaltër (Blue Eye)", cat: "Excursiones", loc: "Cerca de Sarandë", note: "Impresionante piscina natural turquesa profunda. Aguas heladas pero bellísimas.", rating: 5 },
             { id: 7, name: "Ferry del Lago Koman", cat: "Excursiones", loc: "Norte de Albania", note: "Navegación de 3 horas por cañones escarpados que recuerdan a fiordos noruegos.", rating: 5 },
@@ -1478,9 +1417,13 @@ async function sincronizarConGoogleSheets() {
             { shqip: "Gëzuar!", pron: "Guezuar!", esp: "¡Salud!" }
         ];
 
-        // URL del bucket en la nube (Usando un espacio único para evitar colisiones)
-        const SYNC_URL = 'https://kvdb.io/ShqipTourSync2026_xYz987_v2/';
+        // Determinar URL Guardada o Aplicar la de por defecto
+        let savedUrl = localStorage.getItem('albania_google_sheets_url');
+        if (!savedUrl || savedUrl.trim() === '') {
+            savedUrl = 'https://script.google.com/macros/s/AKfycbzoPmL7fb6RbvATbwtr1xHjyfLkEDyUsF-YLRWI1e2zcwe8mH2NxQmL5KvDYtmdK-Aw5A/exec';
+        }
 
+        // Inicializar Estado
         let state = {
             itinerary: JSON.parse(localStorage.getItem('albania_itinerary')) || defaultItinerary,
             expenses: JSON.parse(localStorage.getItem('albania_expenses')) || defaultExpenses,
@@ -1489,12 +1432,12 @@ async function sincronizarConGoogleSheets() {
             towns: JSON.parse(localStorage.getItem('albania_towns')) || defaultTowns,
             places: JSON.parse(localStorage.getItem('albania_places')) || defaultPlaces,
             syncKey: localStorage.getItem('albania_sync_key') || generateDefaultSyncKey(),
-            autoSync: JSON.parse(localStorage.getItem('albania_auto_sync')) || false
+            autoSync: JSON.parse(localStorage.getItem('albania_auto_sync')) || false,
+            googleSheetsUrl: savedUrl
         };
 
         let activePlacesFilter = 'Todos';
 
-        // Generar un código único por defecto para sincronizar la primera vez
         function generateDefaultSyncKey() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
             let code = 'SHQIP-';
@@ -1504,7 +1447,7 @@ async function sincronizarConGoogleSheets() {
             return code;
         }
 
-        // Guardar estado en localStorage
+        // Guardar estado local
         function saveState() {
             localStorage.setItem('albania_itinerary', JSON.stringify(state.itinerary));
             localStorage.setItem('albania_expenses', JSON.stringify(state.expenses));
@@ -1514,16 +1457,21 @@ async function sincronizarConGoogleSheets() {
             localStorage.setItem('albania_places', JSON.stringify(state.places));
             localStorage.setItem('albania_sync_key', state.syncKey);
             localStorage.setItem('albania_auto_sync', JSON.stringify(state.autoSync));
+            localStorage.setItem('albania_google_sheets_url', state.googleSheetsUrl);
             
             updateAllViews();
 
-            // Sincronización automática silenciosa si está activada
             if (state.autoSync) {
                 uploadToCloudSilent();
             }
         }
 
-        // Cambio de pestañas principales fluido
+        function updateGoogleSheetsUrl(input) {
+            state.googleSheetsUrl = input.value.trim();
+            saveState();
+            showToast("Enlace de Google Sheets guardado.");
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
             
@@ -1572,7 +1520,6 @@ async function sincronizarConGoogleSheets() {
             }
         }
 
-        // Sistema de Notificaciones Inteligentes (sin usar alert)
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -1604,12 +1551,12 @@ async function sincronizarConGoogleSheets() {
             }, 400);
         }
 
-        // APARTADO CLOUD SYNC
+        // APARTADO CLOUD SYNC (SOPORTADO POR GOOGLE SHEETS)
         function openSyncModal() {
-            document.getElementById('sync-key-input').value = state.syncKey;
             document.getElementById('auto-sync-check').checked = state.autoSync;
+            document.getElementById('google-sheets-url-input').value = state.googleSheetsUrl;
             document.getElementById('sync-modal').classList.remove('hidden');
-            exportManual(); // Generar código manual automáticamente para que esté listo
+            exportManual();
         }
 
         function closeSyncModal() {
@@ -1621,64 +1568,48 @@ async function sincronizarConGoogleSheets() {
             state.syncKey = nextKey;
             document.getElementById('sync-key-input').value = nextKey;
             saveState();
-            showToast("Nuevo código de viaje generado de forma local.");
+            showToast("Nuevo código generado de forma local.");
         }
 
         function copySyncCode() {
             const input = document.getElementById('sync-key-input');
             input.select();
             document.execCommand('copy');
-            showToast("¡Código copiado al portapapeles!");
+            showToast("¡Código copiado!");
         }
 
         async function uploadToCloud() {
-            const key = document.getElementById('sync-key-input').value.trim().toUpperCase();
-            if (!key || key.length < 4) {
-                showToast("Por favor, introduce un código de viaje válido.", "error");
+            if (!state.googleSheetsUrl) {
+                showToast("Configura primero tu enlace de Google Sheets arriba", "error");
                 return;
             }
-            state.syncKey = key;
             try {
-                showToast("Subiendo información del viaje a la nube...");
-                const response = await fetch(`${SYNC_URL}${key}`, {
+                showToast("Subiendo información a tu Google Sheets...");
+                
+                // Usando mode 'no-cors' y cabecera 'text/plain' evitamos el error CORS de Google Apps Script.
+                await fetch(state.googleSheetsUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        itinerary: state.itinerary,
-                        expenses: state.expenses,
-                        packing: state.packing,
-                        documents: state.documents,
-                        towns: state.towns,
-                        places: state.places
-                    })
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(state)
                 });
-                if (response.ok) {
-                    showToast("¡Sincronizado! Vuestro viaje está guardado de forma segura.");
-                    saveState();
-                } else {
-                    showToast("Error del servidor al sincronizar.", "error");
-                }
+                
+                showToast("¡Datos sincronizados en tu Google Sheets!");
+                saveState();
             } catch (err) {
                 console.error(err);
-                showToast("Error de conexión. Comprueba tu señal a internet.", "error");
+                showToast("Error al conectar con Google Sheets.", "error");
             }
         }
 
         async function uploadToCloudSilent() {
-            const key = state.syncKey;
-            if (!key) return;
+            if (!state.googleSheetsUrl) return;
             try {
-                await fetch(`${SYNC_URL}${key}`, {
+                await fetch(state.googleSheetsUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        itinerary: state.itinerary,
-                        expenses: state.expenses,
-                        packing: state.packing,
-                        documents: state.documents,
-                        towns: state.towns,
-                        places: state.places
-                    })
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(state)
                 });
             } catch (err) {
                 console.warn("Silent sync failed:", err);
@@ -1686,56 +1617,59 @@ async function sincronizarConGoogleSheets() {
         }
 
         async function downloadFromCloud() {
-            const key = document.getElementById('sync-key-input').value.trim().toUpperCase();
-            if (!key) {
-                showToast("Introduce el código de sincronización para buscar en la nube.", "error");
+            if (!state.googleSheetsUrl) {
+                showToast("Configura primero tu enlace de Google Sheets arriba", "error");
                 return;
             }
             try {
-                showToast("Buscando vuestro viaje en la nube...");
-                const response = await fetch(`${SYNC_URL}${key}`);
-                if (response.status === 404) {
-                    showToast("Código de viaje no encontrado en la nube. Sube los datos primero desde el otro móvil.", "error");
-                    return;
-                }
-                if (!response.ok) {
-                    throw new Error("Error en la descarga");
-                }
+                showToast("Descargando datos desde Google Sheets...");
+                // Para las descargas (GET) el CORS está permitido por Apps Script.
+                const response = await fetch(state.googleSheetsUrl, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
                 const cloudData = await response.json();
                 
-                // Actualizar estado local
-                state.itinerary = cloudData.itinerary || state.itinerary;
-                state.expenses = cloudData.expenses || state.expenses;
-                state.packing = cloudData.packing || state.packing;
-                state.documents = cloudData.documents || state.documents;
-                state.towns = cloudData.towns || state.towns;
-                state.places = cloudData.places || state.places;
-                state.syncKey = key;
-
-                saveState();
-                updateAllViews();
-                showToast("¡Viaje descargado y sincronizado con éxito!");
-                closeSyncModal();
-            } catch (err) {
-                console.error(err);
-                showToast("Error de descarga. Inténtalo de nuevo.", "error");
-            }
-        }
-
-        async function downloadFromCloudSilent() {
-            const key = state.syncKey;
-            if (!key) return;
-            try {
-                const response = await fetch(`${SYNC_URL}${key}`);
-                if (response.ok) {
-                    const cloudData = await response.json();
+                if (cloudData && Object.keys(cloudData).length > 0) {
                     state.itinerary = cloudData.itinerary || state.itinerary;
                     state.expenses = cloudData.expenses || state.expenses;
                     state.packing = cloudData.packing || state.packing;
                     state.documents = cloudData.documents || state.documents;
                     state.towns = cloudData.towns || state.towns;
                     state.places = cloudData.places || state.places;
+                    
                     saveState();
+                    updateAllViews();
+                    showToast("¡Sincronizado! Datos importados con éxito.");
+                    closeSyncModal();
+                } else {
+                    showToast("No se encontraron datos guardados en la nube.", "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error al descargar datos de Google Sheets.", "error");
+            }
+        }
+
+        async function downloadFromCloudSilent() {
+            if (!state.googleSheetsUrl) return;
+            try {
+                const response = await fetch(state.googleSheetsUrl, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                if (response.ok) {
+                    const cloudData = await response.json();
+                    if (cloudData && Object.keys(cloudData).length > 0) {
+                        state.itinerary = cloudData.itinerary || state.itinerary;
+                        state.expenses = cloudData.expenses || state.expenses;
+                        state.packing = cloudData.packing || state.packing;
+                        state.documents = cloudData.documents || state.documents;
+                        state.towns = cloudData.towns || state.towns;
+                        state.places = cloudData.places || state.places;
+                        saveState();
+                    }
                 }
             } catch (err) {
                 console.warn("Silent pull failed:", err);
@@ -1746,14 +1680,13 @@ async function sincronizarConGoogleSheets() {
             state.autoSync = checkbox.checked;
             saveState();
             if (state.autoSync) {
-                showToast("Auto-Sincronización activada con éxito.");
+                showToast("Sincronización en segundo plano activada.");
                 uploadToCloudSilent();
             } else {
-                showToast("Sincronización en segundo plano desactivada.");
+                showToast("Auto-Sincronización desactivada.");
             }
         }
 
-        // Respaldos Manuales sin Internet (Base64)
         function exportManual() {
             const jsonStr = JSON.stringify({
                 itinerary: state.itinerary,
@@ -1763,7 +1696,6 @@ async function sincronizarConGoogleSheets() {
                 towns: state.towns,
                 places: state.places
             });
-            // Codificar en Base64 para evitar caracteres rotos al enviar por chats
             const base64Str = btoa(unescape(encodeURIComponent(jsonStr)));
             document.getElementById('manual-sync-text').value = base64Str;
         }
@@ -1771,7 +1703,7 @@ async function sincronizarConGoogleSheets() {
         function importManual() {
             const base64Str = document.getElementById('manual-sync-text').value.trim();
             if (!base64Str) {
-                showToast("Por favor, introduce el código Base64 para importar.", "error");
+                showToast("Introduce el código manual.", "error");
                 return;
             }
             try {
@@ -1787,10 +1719,10 @@ async function sincronizarConGoogleSheets() {
                 
                 saveState();
                 updateAllViews();
-                showToast("¡Viaje importado de forma manual con éxito!");
+                showToast("¡Viaje importado de forma manual!");
                 closeSyncModal();
             } catch (err) {
-                showToast("El código manual no es válido o está incompleto.", "error");
+                showToast("El código no es válido.", "error");
             }
         }
 
@@ -1889,11 +1821,10 @@ async function sincronizarConGoogleSheets() {
             });
         }
 
-        // Conversor de Divisas Dinámico
         function convertDivisa(from) {
             const eurInput = document.getElementById('conv-eur');
             const allInput = document.getElementById('conv-all');
-            const rate = 95.45; // Tasa oficial actualizada de EUR a ALL
+            const rate = 95.45;
 
             if (from === 'eur') {
                 const val = parseFloat(eurInput.value);
@@ -1912,7 +1843,6 @@ async function sincronizarConGoogleSheets() {
             }
         }
 
-        // Gestión de Itinerario (EDICIÓN COMPLETA)
         function openAddDayModal() {
             document.getElementById('add-day-modal').classList.remove('hidden');
         }
@@ -1938,13 +1868,13 @@ async function sincronizarConGoogleSheets() {
             state.itinerary.push({
                 id: nextId,
                 title,
-                activities: activities || "Sin actividades registradas.",
+                activities: activities || "Sin actividades.",
                 hotel: hotel || "Por determinar"
             });
 
             saveState();
             closeAddDayModal();
-            showToast("¡Día añadido al itinerario!");
+            showToast("¡Día añadido!");
         }
 
         function openEditDayModal(id) {
@@ -1970,7 +1900,7 @@ async function sincronizarConGoogleSheets() {
             const hotel = document.getElementById('edit-day-hotel').value.trim();
 
             if (!title || !activities) {
-                showToast("Por favor, completa los campos obligatorios.", "error");
+                showToast("Por favor, completa los campos.", "error");
                 return;
             }
 
@@ -1984,17 +1914,16 @@ async function sincronizarConGoogleSheets() {
                 };
                 saveState();
                 closeEditDayModal();
-                showToast("¡Día de itinerario actualizado con éxito!");
+                showToast("Itinerario actualizado.");
             }
         }
 
         function deleteDay(id) {
             state.itinerary = state.itinerary.filter(d => d.id !== id);
             saveState();
-            showToast("Día de itinerario eliminado.", "error");
+            showToast("Día eliminado.", "error");
         }
 
-        // Gestión de Gastos (EDICIÓN COMPLETA)
         function addExpense(e) {
             e.preventDefault();
             const desc = document.getElementById('expense-desc').value.trim();
@@ -2002,7 +1931,7 @@ async function sincronizarConGoogleSheets() {
             const category = document.getElementById('expense-category').value;
 
             if (!desc || isNaN(amount) || amount <= 0) {
-                showToast("Por favor, rellena los campos correctamente.", "error");
+                showToast("Rellena los campos correctamente.", "error");
                 return;
             }
 
@@ -2012,7 +1941,7 @@ async function sincronizarConGoogleSheets() {
             saveState();
             document.getElementById('expense-desc').value = '';
             document.getElementById('expense-amount').value = '';
-            showToast("Gasto añadido correctamente.");
+            showToast("Gasto guardado.");
         }
 
         function openEditExpenseModal(id) {
@@ -2038,7 +1967,7 @@ async function sincronizarConGoogleSheets() {
             const category = document.getElementById('edit-expense-category').value;
 
             if (!desc || isNaN(amount) || amount <= 0) {
-                showToast("Por favor, completa los campos correctamente.", "error");
+                showToast("Por favor, completa los campos.", "error");
                 return;
             }
 
@@ -2062,7 +1991,6 @@ async function sincronizarConGoogleSheets() {
             showToast("Gasto eliminado.", "error");
         }
 
-        // Gestión de Equipaje (EDICIÓN COMPLETA)
         function addPackingItem() {
             const input = document.getElementById('new-packing-item');
             const text = input.value.trim();
@@ -2073,7 +2001,7 @@ async function sincronizarConGoogleSheets() {
             
             input.value = '';
             saveState();
-            showToast("Artículo añadido a equipaje.");
+            showToast("Añadido a equipaje.");
         }
 
         function openEditPackingModal(id) {
@@ -2097,7 +2025,7 @@ async function sincronizarConGoogleSheets() {
             const cat = document.getElementById('edit-packing-cat').value;
 
             if (!text) {
-                showToast("Introduce el nombre del artículo.", "error");
+                showToast("Introduce el nombre.", "error");
                 return;
             }
 
@@ -2125,16 +2053,15 @@ async function sincronizarConGoogleSheets() {
         function deletePackingItem(id) {
             state.packing = state.packing.filter(i => i.id !== id);
             saveState();
-            showToast("Artículo eliminado de equipaje.", "error");
+            showToast("Mochila actualizada.", "error");
         }
 
-        // Gestión de Pueblos y Lugares recomendados
         function toggleTownVisited(id) {
             const town = state.towns.find(t => t.id === id);
             if (town) {
                 town.visited = !town.visited;
                 saveState();
-                showToast(town.visited ? `🎉 ¡Habéis visitado ${town.name}!` : `📍 ${town.name} añadido a pendientes.`);
+                showToast(town.visited ? `🎉 ¡Has visitado ${town.name}!` : `📍 Pendiente de visitar.`);
             }
         }
 
@@ -2147,7 +2074,7 @@ async function sincronizarConGoogleSheets() {
             const rawPlaces = document.getElementById('add-town-places').value.trim();
 
             if (!name || !desc) {
-                showToast("Por favor, introduce el nombre y descripción del pueblo.", "error");
+                showToast("Introduce nombre y descripción.", "error");
                 return;
             }
 
@@ -2174,13 +2101,13 @@ async function sincronizarConGoogleSheets() {
             document.getElementById('add-town-image').value = '';
             document.getElementById('add-town-places').value = '';
 
-            showToast(`🏡 ¡Pueblo añadido: ${name}!`);
+            showToast(`🏡 ¡Pueblo añadido!`);
         }
 
         function deleteTown(id) {
             state.towns = state.towns.filter(t => t.id !== id);
             saveState();
-            showToast("Pueblo eliminado del explorador.", "error");
+            showToast("Pueblo eliminado.", "error");
         }
 
         function openEditTownModal(id) {
@@ -2210,7 +2137,7 @@ async function sincronizarConGoogleSheets() {
             const rawPlaces = document.getElementById('edit-town-places').value.trim();
 
             if (!name || !desc) {
-                showToast("Por favor, introduce el nombre y descripción del pueblo.", "error");
+                showToast("Introduce nombre y descripción.", "error");
                 return;
             }
 
@@ -2230,7 +2157,7 @@ async function sincronizarConGoogleSheets() {
                 };
                 saveState();
                 closeEditTownModal();
-                showToast(`🏡 ¡Pueblo "${name}" actualizado!`);
+                showToast(`🏡 Pueblo "${name}" actualizado!`);
             }
         }
 
@@ -2243,7 +2170,7 @@ async function sincronizarConGoogleSheets() {
                 container.innerHTML = `
                     <div class="col-span-full text-center py-10 bg-white border border-slate-100 rounded-2xl">
                         <i class="fa-regular fa-folder-open text-3xl text-slate-300 mb-2 block"></i>
-                        <p class="text-xs text-slate-400">Aún no hay pueblos guardados en la guía. ¡Añade vuestro primer pueblo!</p>
+                        <p class="text-xs text-slate-400">Aún no hay pueblos guardados en la guía.</p>
                     </div>
                 `;
                 return;
@@ -2260,7 +2187,7 @@ async function sincronizarConGoogleSheets() {
                         `;
                     });
                 } else {
-                    placesHTML = `<span class="text-[10px] text-slate-400 italic">No hay monumentos listados</span>`;
+                    placesHTML = `<span class="text-[10px] text-slate-400 italic">No hay monumentos</span>`;
                 }
 
                 const imageUrl = t.image && t.image.trim() !== '' 
@@ -2362,7 +2289,7 @@ async function sincronizarConGoogleSheets() {
                 name,
                 cat,
                 loc,
-                note: note || "Sin anotaciones extras.",
+                note: note || "Sin anotaciones.",
                 rating
             });
 
@@ -2378,7 +2305,7 @@ async function sincronizarConGoogleSheets() {
         function deleteCustomPlace(id) {
             state.places = state.places.filter(p => p.id !== id);
             saveState();
-            showToast("Recomendación eliminada con éxito.", "error");
+            showToast("Recomendación eliminada.", "error");
         }
 
         function openEditPlaceModal(id) {
@@ -2420,7 +2347,7 @@ async function sincronizarConGoogleSheets() {
                     loc,
                     cat,
                     rating,
-                    note: note || "Sin anotaciones extras."
+                    note: note || "Sin anotaciones."
                 };
                 saveState();
                 closeEditPlaceModal();
@@ -2441,7 +2368,7 @@ async function sincronizarConGoogleSheets() {
                 container.innerHTML = `
                     <div class="col-span-full text-center py-10 bg-white border border-slate-100 rounded-2xl">
                         <i class="fa-regular fa-folder-open text-3xl text-slate-300 mb-2 block"></i>
-                        <p class="text-xs text-slate-400">Aún no hay sitios registrados en esta categoría.</p>
+                        <p class="text-xs text-slate-400">Aún no hay sitios registrados.</p>
                     </div>
                 `;
                 return;
@@ -2501,9 +2428,8 @@ async function sincronizarConGoogleSheets() {
             }
         }
 
-        // Sincronización general del DOM con el estado
         function updateAllViews() {
-            // 1. Dashboard de Datos
+            // Dashboard
             const totalSpent = state.expenses.reduce((sum, curr) => sum + curr.amount, 0);
             document.getElementById('dash-spent').innerText = `${totalSpent.toFixed(2)} €`;
             document.getElementById('dash-spent-lek').innerText = `~${Math.round(totalSpent * 95.45).toLocaleString('de-DE')} Leks`;
@@ -2511,13 +2437,13 @@ async function sincronizarConGoogleSheets() {
             const totalStops = state.itinerary.length;
             document.getElementById('dash-stops').innerText = `${totalStops} Días`;
 
-            // Progreso del Equipaje
+            // Progreso Mochila
             const totalItems = state.packing.length;
             const checkedItems = state.packing.filter(i => i.checked).length;
             const packingProgress = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
             document.getElementById('dash-packing-progress').innerText = `${packingProgress}% Listo`;
 
-            // 2. Renderizar Línea de Tiempo del Itinerario
+            // Renderizar Línea de Tiempo
             const timeline = document.getElementById('itinerary-timeline');
             if(timeline) {
                 timeline.innerHTML = '';
@@ -2553,7 +2479,7 @@ async function sincronizarConGoogleSheets() {
                 });
             }
 
-            // 3. Renderizar Presupuesto
+            // Gastos
             const expensesTbody = document.getElementById('expenses-tbody');
             if(expensesTbody) {
                 expensesTbody.innerHTML = '';
@@ -2592,7 +2518,7 @@ async function sincronizarConGoogleSheets() {
                 document.getElementById('budget-percentage').innerText = `${percent.toFixed(0)}% de 1000€`;
             }
 
-            // 4. Renderizar Equipaje por Categorías
+            // Equipaje
             const listVital = document.getElementById('packing-vital');
             const listClothing = document.getElementById('packing-clothing');
             const listExtras = document.getElementById('packing-extras');
@@ -2630,7 +2556,7 @@ async function sincronizarConGoogleSheets() {
                 });
             }
 
-            // 5. Rellenar campos de Documentación
+            // Documentación
             const fOutAir = document.getElementById('doc-flight-out-airline');
             if(fOutAir) {
                 document.getElementById('doc-flight-out-airline').value = state.documents.flightOutAirline || '';
@@ -2670,7 +2596,7 @@ async function sincronizarConGoogleSheets() {
         }
 
         window.onload = function() {
-            // Renderizar diccionario rápido
+            // Renderizar Diccionario
             const phrasesGrid = document.getElementById('phrases-grid');
             if(phrasesGrid) {
                 phrasesGrid.innerHTML = '';
@@ -2693,7 +2619,7 @@ async function sincronizarConGoogleSheets() {
                 });
             }
 
-            // Calcular cuenta atrás del viaje (Salida de Santander: 6 de Agosto de 2026, 21:10)
+            // Cuenta Atrás
             const targetDate = new Date("2026-08-06T21:10:00").getTime();
             const now = new Date().getTime();
             const diff = targetDate - now;
@@ -2712,12 +2638,11 @@ async function sincronizarConGoogleSheets() {
                 }
             }
 
-            // Realizar un silent pull inicial si la auto-sincronización está activa
+            // Pull Inicial Silencioso
             if (state.autoSync) {
                 downloadFromCloudSilent();
             }
 
-            // Vista por defecto
             switchTab('dashboard');
             switchPlacesSubTab('pueblos');
             updateAllViews();
