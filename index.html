@@ -236,51 +236,60 @@
                         </div>
                         
                         <div class="relative w-full aspect-[4/5] bg-sky-50 rounded-xl overflow-hidden flex items-center justify-center p-2 border border-slate-100">
-                            <!-- SVG Mapa conceptual de Albania -->
-                            <svg class="w-full h-full max-h-[380px]" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M 10 100 Q 60 120 40 200 T 50 350 T 80 480" stroke="#bae6fd" stroke-width="4" stroke-dasharray="5 5" fill="none"/>
-                                <text x="15" y="240" fill="#0369a1" font-size="10" font-weight="bold" transform="rotate(-90 15 240)">MAR ADRIÁTICO</text>
-                                <text x="15" y="400" fill="#0369a1" font-size="10" font-weight="bold" transform="rotate(-90 15 400)">MAR JÓNICO</text>
+                            <!-- Mapa de Albania por zonas -->
+                            <svg class="w-full h-full max-h-[380px]" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mapa realista de Albania por zonas">
+                                <rect x="16" y="18" width="368" height="464" rx="22" fill="#eff6ff"/>
+                                <path d="M62 62 C43 135, 51 212, 41 286 C35 340, 42 406, 76 458" stroke="#38bdf8" stroke-width="8" stroke-linecap="round" opacity="0.42"/>
+                                <text x="31" y="260" fill="#0369a1" font-size="11" font-weight="800" transform="rotate(-90 31 260)">MAR ADRI&Aacute;TICO / J&Oacute;NICO</text>
 
-                                <path d="M 130 30 C 170 20, 240 40, 240 70 C 240 100, 270 120, 280 150 C 290 180, 310 200, 330 220 C 350 240, 320 280, 300 310 C 280 340, 290 380, 290 410 C 290 440, 270 460, 250 480 C 230 490, 200 480, 180 470 C 170 450, 150 440, 140 410 C 130 380, 100 360, 90 330 C 80 300, 110 270, 110 240 C 110 210, 100 180, 100 150 C 100 120, 130 100, 130 70 Z" fill="#fef08a" opacity="0.4" stroke="#eab308" stroke-width="2" stroke-linecap="round"/>
-                                
-                                <path d="M 180 150 L 190 230 L 175 280 L 155 350 L 140 430 L 165 440 L 175 280" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+                                <defs>
+                                    <path id="albaniaOutline" d="M165 25 C190 18, 215 31, 225 51 C237 75, 254 82, 268 104 C280 123, 274 144, 287 160 C300 177, 324 188, 329 211 C334 232, 312 248, 305 268 C296 291, 307 314, 297 337 C286 363, 291 389, 274 414 C258 438, 236 461, 211 474 C191 484, 168 475, 153 458 C142 445, 143 425, 130 411 C115 395, 101 384, 99 360 C96 337, 111 317, 105 296 C98 272, 77 257, 82 231 C86 207, 107 194, 104 169 C101 145, 111 127, 126 111 C143 92, 135 72, 146 51 C151 40, 156 31, 165 25 Z"/>
+                                    <clipPath id="albaniaClip">
+                                        <use href="#albaniaOutline"/>
+                                    </clipPath>
+                                    <filter id="realMapShadow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.14"/>
+                                    </filter>
+                                </defs>
 
-                                <!-- Tirana (Capital) -->
-                                <g class="cursor-pointer group" onclick="showMapPoint('Tirana (Llegada SDR)', 'Vuestro vuelo de Wizz Air aterriza aquí en el aeropuerto de Tirana (TIA) a las 00:10 del viernes 7 de agosto.')">
-                                    <circle cx="180" cy="150" r="7" fill="#E41E26" class="animate-ping" opacity="0.6"/>
-                                    <circle cx="180" cy="150" r="5" fill="#E41E26"/>
-                                    <text x="190" y="154" fill="#1e293b" font-size="11" font-weight="bold">Tirana</text>
+                                <g filter="url(#realMapShadow)">
+                                    <use href="#albaniaOutline" fill="#ffffff"/>
+                                    <g clip-path="url(#albaniaClip)" stroke="#ffffff" stroke-width="4" stroke-linejoin="round">
+                                        <g class="cursor-pointer" onclick="showMapPoint('Interior hist&oacute;rico', 'Zona central e interior: Berat, Gjirokast&euml;r, castillos, ciudades hist&oacute;ricas y carretera panor&aacute;mica.')">
+                                            <path d="M78 18 H335 V492 H78 Z" fill="#f59e0b"/>
+                                        </g>
+                                        <g class="cursor-pointer" onclick="showMapPoint('Alpes albaneses', 'Zona norte de monta&ntilde;a: valles alpinos, pueblos como Theth y paisajes de senderismo.')">
+                                            <path d="M96 18 H311 V151 C280 160, 244 163, 211 154 C174 144, 137 137, 102 147 Z" fill="#16a34a"/>
+                                        </g>
+                                        <g class="cursor-pointer" onclick="showMapPoint('Costa adri&aacute;tica', 'Franja oeste y noroeste: costa adri&aacute;tica, accesos desde el norte y zonas de playa m&aacute;s tranquilas.')">
+                                            <path d="M82 145 C108 137, 136 143, 155 158 C140 193, 121 226, 92 253 C79 222, 92 188, 82 145 Z" fill="#0ea5e9"/>
+                                        </g>
+                                        <g class="cursor-pointer" onclick="showMapPoint('Riviera albanesa', 'Costa sur y Riviera: Himar&euml;, Gjipe, Sarand&euml;, Ksamil y playas del J&oacute;nico.')">
+                                            <path d="M91 283 C112 297, 127 319, 130 348 C134 381, 147 410, 166 438 C151 454, 128 456, 109 438 C86 416, 78 380, 82 344 C85 319, 78 300, 91 283 Z" fill="#0891b2"/>
+                                        </g>
+                                        <g class="cursor-pointer" onclick="showMapPoint('Sur y Butrinto', 'Extremo sur: Sarand&euml;, Ksamil, Butrinto y conexi&oacute;n visual con Corf&uacute;.')">
+                                            <path d="M151 421 C172 442, 194 470, 224 470 C207 485, 178 483, 158 462 C148 451, 145 434, 151 421 Z" fill="#7c3aed"/>
+                                        </g>
+                                        <g class="cursor-pointer" onclick="showMapPoint('Capital', '&Aacute;rea de Tirana: llegada al aeropuerto, base log&iacute;stica y &uacute;ltima noche antes del regreso.')">
+                                            <path d="M146 159 C171 149, 208 154, 231 173 C249 188, 251 215, 234 235 C214 257, 176 258, 151 239 C128 221, 124 178, 146 159 Z" fill="#dc2626"/>
+                                        </g>
+                                    </g>
+                                    <use href="#albaniaOutline" fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linejoin="round"/>
                                 </g>
 
-                                <!-- Krujë -->
-                                <g class="cursor-pointer group" onclick="showMapPoint('Krujë', 'Ciudad del héroe Skanderbeg, ideal para visitar el 7 de agosto antes de bajar a Berat.')">
-                                    <circle cx="175" cy="115" r="4" fill="#0E7490"/>
-                                    <text x="185" y="119" fill="#1e293b" font-size="10">Krujë</text>
-                                </g>
+                                <path d="M112 127 C101 170, 108 210, 93 251 C76 298, 83 360, 116 415 C128 435, 142 453, 153 458" stroke="#0f172a" stroke-width="2" stroke-dasharray="5 7" opacity="0.32"/>
+                                <circle cx="184" cy="205" r="7" fill="#ffffff" stroke="#dc2626" stroke-width="4"/>
+                                <text x="197" y="209" fill="#111827" font-size="13" font-weight="900">Tirana</text>
 
-                                <!-- Berat -->
-                                <g class="cursor-pointer group" onclick="showMapPoint('Berat', 'La mítica ciudad de las mil ventanas. Increíbles casas otomanas tradicionales, vuestra parada el 7-8 de agosto.')">
-                                    <circle cx="190" cy="230" r="5" fill="#0E7490"/>
-                                    <text x="202" y="234" fill="#1e293b" font-size="11" font-weight="bold">Berat</text>
-                                </g>
-
-                                <!-- Gjirokastër -->
-                                <g class="cursor-pointer group" onclick="showMapPoint('Gjirokastër', 'Parada el 8-9 de agosto. Ciudad museo de piedra con un castillo majestuoso.')">
-                                    <circle cx="175" cy="280" r="5" fill="#0E7490"/>
-                                    <text x="187" y="284" fill="#1e293b" font-size="11" font-weight="bold">Gjirokastër</text>
-                                </g>
-
-                                <!-- Sarandë / Ksamil -->
-                                <g class="cursor-pointer group" onclick="showMapPoint('Sarandë y Ksamil', 'Parada costera del 9 al 11 de agosto. Playas de arena blanca y agua turquesa frente a Corfú.')">
-                                    <circle cx="140" cy="430" r="6" fill="#0E7490"/>
-                                    <text x="152" y="434" fill="#1e293b" font-size="11" font-weight="bold">Sarandë/Ksamil</text>
-                                </g>
-
-                                <!-- Himarë / Riviera -->
-                                <g class="cursor-pointer group" onclick="showMapPoint('Himarë', 'Visita costera el 11 de agosto, perfecta para descubrir la increíble playa salvaje de Gjipe.')">
-                                    <circle cx="155" cy="350" r="5" fill="#0E7490"/>
-                                    <text x="165" y="354" fill="#1e293b" font-size="10">Himarë</text>
+                                <g transform="translate(270 52)">
+                                    <rect width="108" height="178" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+                                    <text x="14" y="24" fill="#334155" font-size="11" font-weight="900">Zonas</text>
+                                    <circle cx="17" cy="47" r="5" fill="#16a34a"/><text x="29" y="51" fill="#475569" font-size="10" font-weight="700">Alpes</text>
+                                    <circle cx="17" cy="70" r="5" fill="#0ea5e9"/><text x="29" y="74" fill="#475569" font-size="10" font-weight="700">Adri&aacute;tica</text>
+                                    <circle cx="17" cy="93" r="5" fill="#dc2626"/><text x="29" y="97" fill="#475569" font-size="10" font-weight="700">Capital</text>
+                                    <circle cx="17" cy="116" r="5" fill="#f59e0b"/><text x="29" y="120" fill="#475569" font-size="10" font-weight="700">Interior</text>
+                                    <circle cx="17" cy="139" r="5" fill="#0891b2"/><text x="29" y="143" fill="#475569" font-size="10" font-weight="700">Riviera</text>
+                                    <circle cx="17" cy="162" r="5" fill="#7c3aed"/><text x="29" y="166" fill="#475569" font-size="10" font-weight="700">Sur</text>
                                 </g>
                             </svg>
 
