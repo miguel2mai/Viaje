@@ -53,37 +53,30 @@
             to { opacity: 1; transform: translateY(0); }
         }        .payer-wheel {
             background: conic-gradient(
-                #0f766e 0deg 22.5deg,
-                #e11d48 22.5deg 45deg,
-                #14b8a6 45deg 67.5deg,
-                #f43f5e 67.5deg 90deg,
-                #0f766e 90deg 112.5deg,
-                #e11d48 112.5deg 135deg,
-                #14b8a6 135deg 157.5deg,
-                #f43f5e 157.5deg 180deg,
-                #0f766e 180deg 202.5deg,
-                #e11d48 202.5deg 225deg,
-                #14b8a6 225deg 247.5deg,
-                #f43f5e 247.5deg 270deg,
-                #0f766e 270deg 292.5deg,
-                #e11d48 292.5deg 315deg,
-                #14b8a6 315deg 337.5deg,
-                #f43f5e 337.5deg 360deg
+                #0f766e 0deg 45deg,
+                #e11d48 45deg 90deg,
+                #14b8a6 90deg 135deg,
+                #f43f5e 135deg 180deg,
+                #0f766e 180deg 225deg,
+                #e11d48 225deg 270deg,
+                #14b8a6 270deg 315deg,
+                #f43f5e 315deg 360deg
             );
             transition: transform 3.6s cubic-bezier(0.12, 0.72, 0.18, 1);
         }
         .payer-wheel-label {
             position: absolute;
-            inset: 50% auto auto 50%;
-            width: 50%;
+            left: 50%;
+            top: 50%;
             transform-origin: left center;
             color: white;
             font-size: 9px;
             font-weight: 800;
-            text-align: right;
-            padding-right: 12px;
+            line-height: 1;
+            text-align: center;
             text-shadow: 0 1px 2px rgba(15, 23, 42, 0.45);
             pointer-events: none;
+            transform: translate(-50%, -50%) rotate(var(--label-angle)) translateX(55px) rotate(calc(var(--label-angle) * -1));
         }
     </style>
 </head>
@@ -433,22 +426,14 @@
                                         <i class="fa-solid fa-location-pin text-2xl"></i>
                                     </div>
                                     <div id="payer-wheel" class="payer-wheel w-full h-full rounded-full border-[10px] border-white shadow-inner relative overflow-hidden">
-                                        <span class="payer-wheel-label" style="transform: rotate(11.25deg) translateY(-50%);">Miguel</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(33.75deg) translateY(-50%);">Marina</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(56.25deg) translateY(-50%);">Miguel</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(78.75deg) translateY(-50%);">Marina</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(101.25deg) translateY(-50%);">Miguel</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(123.75deg) translateY(-50%);">Marina</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(146.25deg) translateY(-50%);">Miguel</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(168.75deg) translateY(-50%);">Marina</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(191.25deg) translateY(-50%);">Miguel</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(213.75deg) translateY(-50%);">Marina</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(236.25deg) translateY(-50%);">Miguel</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(258.75deg) translateY(-50%);">Marina</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(281.25deg) translateY(-50%);">Miguel</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(303.75deg) translateY(-50%);">Marina</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(326.25deg) translateY(-50%);">Miguel</span>
-                                        <span class="payer-wheel-label" style="transform: rotate(348.75deg) translateY(-50%);">Marina</span>
+                                        <span class="payer-wheel-label" style="--label-angle: -67.5deg;">Miguel</span>
+                                        <span class="payer-wheel-label" style="--label-angle: -22.5deg;">Marina</span>
+                                        <span class="payer-wheel-label" style="--label-angle: 22.5deg;">Miguel</span>
+                                        <span class="payer-wheel-label" style="--label-angle: 67.5deg;">Marina</span>
+                                        <span class="payer-wheel-label" style="--label-angle: 112.5deg;">Miguel</span>
+                                        <span class="payer-wheel-label" style="--label-angle: 157.5deg;">Marina</span>
+                                        <span class="payer-wheel-label" style="--label-angle: 202.5deg;">Miguel</span>
+                                        <span class="payer-wheel-label" style="--label-angle: 247.5deg;">Marina</span>
                                         <div class="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full border border-slate-200 shadow-sm flex items-center justify-center">
                                             <i class="fa-solid fa-euro-sign text-slate-700"></i>
                                         </div>
@@ -1919,9 +1904,9 @@
             const result = document.getElementById('payer-wheel-result');
             if (!wheel || !result) return;
 
-            const segmentIndex = Math.floor(Math.random() * 16);
+            const segmentIndex = Math.floor(Math.random() * 8);
             const payer = segmentIndex % 2 === 0 ? 'Miguel' : 'Marina';
-            const segmentCenter = (segmentIndex * 22.5) + 11.25;
+            const segmentCenter = (segmentIndex * 45) + 22.5;
             const targetRotation = 270 - segmentCenter;
             const extraSpins = 1440 + (Math.floor(Math.random() * 4) * 360);
             payerWheelRotation += extraSpins + targetRotation - (payerWheelRotation % 360);
