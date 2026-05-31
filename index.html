@@ -2660,62 +2660,6 @@
             switchPlacesSubTab('pueblos');
             updateAllViews();
         };
-// ==========================================
-// NUEVO SISTEMA DE SINCRONIZACIÓN GOOGLE SHEETS
-// ==========================================
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9GhzJpBWABYgrvDeCn8tIUWOzZwqi5BteA8Vjg-ovpiBOz39g39PPVzoBQKqkTmWb4A/exec"; 
-
-async function uploadToCloud() {
-    if (typeof showToast === "function") showToast("Subiendo datos a Google Sheets...", "info");
-    try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors", // Evita bloqueos de seguridad de Google
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(state)
-        });
-        if (typeof showToast === "function") showToast("¡Sincronizado en Google Sheets!", "success");
-    } catch (error) {
-        console.error(error);
-        if (typeof showToast === "function") showToast("Error al guardar en Google", "error");
-    }
-}
-
-async function downloadFromCloud() {
-    if (typeof showToast === "function") showToast("Descargando datos...", "info");
-    try {
-        const response = await fetch(GOOGLE_SCRIPT_URL);
-        const cloudState = await response.json();
-        if (cloudState && Object.keys(cloudState).length > 0) {
-            state = { ...state, ...cloudState };
-            if (typeof saveState === "function") saveState();
-            
-            // Recargamos la web para que pinte todos los datos nuevos inmediatamente
-            window.location.reload(); 
-        } else {
-            if (typeof showToast === "function") showToast("No hay datos en la nube", "warning");
-        }
-    } catch (error) {
-        console.error(error);
-        if (typeof showToast === "function") showToast("Error al descargar de Google", "error");
-    }
-}
-
-async function downloadFromCloudSilent() {
-    try {
-        const response = await fetch(GOOGLE_SCRIPT_URL);
-        const cloudState = await response.json();
-        if (cloudState && Object.keys(cloudState).length > 0) {
-            state = { ...state, ...cloudState };
-            if (typeof saveState === "function") saveState();
-            // Intenta redibujar la interfaz si existen las funciones
-            if (typeof renderAll === "function") renderAll();
-            else if (typeof updateUI === "function") updateUI();
-        }
-    } catch (e) {
-        console.log("Error en actualización silenciosa", e);
-    }
-}
     </script>
 </body>
 </html>
