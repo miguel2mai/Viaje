@@ -74,10 +74,10 @@
 
                 <!-- Botones del Header (Sincronización y Cuenta atrás) -->
                 <div class="flex items-center gap-2 sm:gap-4">
-                    <!-- Botón Nube Sincronizar -->
-                    <button onclick="openSyncModal()" class="bg-teal-50 hover:bg-teal-100 text-teal-700 px-3 py-2 rounded-xl text-xs font-bold border border-teal-200/50 flex items-center gap-1.5 transition-all shadow-sm">
-                        <i class="fa-solid fa-cloud-arrow-up-down text-sm animate-pulse"></i>
-                        <span class="hidden sm:inline">Sincronizar móvil</span>
+                    <!-- Botón Base de Datos -->
+                    <button onclick="openSyncModal()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-xl text-xs font-bold border border-blue-200/50 flex items-center gap-1.5 transition-all shadow-sm">
+                        <i class="fa-solid fa-database text-sm animate-pulse"></i>
+                        <span class="hidden sm:inline">Base de Datos</span>
                     </button>
                     
                     <div class="hidden md:flex items-center gap-4 bg-slate-50 border border-slate-100 p-1.5 rounded-xl text-sm">
@@ -1197,7 +1197,7 @@
             <div class="flex justify-between items-start">
                 <div>
                     <h3 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-cloud-arrow-up-down text-teal-600"></i>
+                        <i class="fa-solid fa-cloud-arrow-up-down text-blue-600"></i>
                         Sincronizar entre Móviles
                     </h3>
                     <p class="text-xs text-slate-500 mt-1">Comparte y actualiza vuestro viaje a Albania en tiempo real en varios dispositivos.</p>
@@ -1207,39 +1207,41 @@
                 </button>
             </div>
 
-            <!-- Sección 1: Código de Sincronización -->
-            <div class="bg-teal-50/60 border border-teal-100 p-4 rounded-2xl flex flex-col gap-3">
-                <h4 class="text-xs font-bold text-teal-800 uppercase tracking-wider">Paso 1: Vuestro Código de Viaje Compartido</h4>
-                <div class="flex gap-2">
-                    <input type="text" id="sync-key-input" class="flex-1 text-center font-mono font-extrabold text-lg text-slate-800 bg-white p-2.5 rounded-xl border border-teal-200 focus:outline-none uppercase" placeholder="Ej. SHQIP-XYZ123">
-                    <button onclick="copySyncCode()" class="bg-white border border-teal-200 hover:bg-teal-100 text-teal-800 p-2.5 rounded-xl transition-all flex items-center justify-center" title="Copiar código">
-                        <i class="fa-regular fa-copy"></i>
-                    </button>
-                    <button onclick="generateNewSyncCode()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold px-3 rounded-xl transition-all" title="Generar nuevo código">
-                        Nuevo
-                    </button>
+            <!-- Paso 1: Configurar JSONBin -->
+            <div class="bg-blue-50/60 border border-blue-100 p-4 rounded-2xl flex flex-col gap-3">
+                <h4 class="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-database"></i> 1. Conexión a Base de Datos (JSONBin.io)
+                </h4>
+                <div class="grid grid-cols-1 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">BIN ID (Tu viaje)</label>
+                        <input type="text" id="jsonbin-id-input" onchange="updateJsonBinCredentials()" class="w-full text-xs font-mono bg-white p-2.5 rounded-xl border border-blue-200 focus:outline-none" placeholder="Ej. 64a8b...">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">X-Master-Key (Tu contraseña)</label>
+                        <input type="password" id="jsonbin-key-input" onchange="updateJsonBinCredentials()" class="w-full text-xs font-mono bg-white p-2.5 rounded-xl border border-blue-200 focus:outline-none" placeholder="Ej. $2b$10$...">
+                    </div>
                 </div>
                 <p class="text-[10px] text-slate-500 leading-snug">
-                    <i class="fa-solid fa-triangle-exclamation text-teal-600"></i> 
-                    Ambos móviles debéis tener exactamente el <strong>mismo código</strong> introducido arriba para poder compartir los datos de vuestra aventura.
+                    Crea una cuenta gratis en <a href="https://jsonbin.io" target="_blank" class="font-bold text-blue-600 underline">jsonbin.io</a>, crea un Bin nuevo vacío ({}) y pega aquí tus claves. Nunca fallará el CORS.
                 </p>
             </div>
 
-            <!-- Sección 2: Acciones de la nube -->
+            <!-- Botones de la nube -->
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="uploadToCloud()" class="bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                <button onclick="uploadToCloud()" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
-                    1. Subir mis datos
+                    Subir mis datos
                 </button>
                 <button onclick="downloadFromCloud()" class="bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cloud-arrow-down text-sm"></i>
-                    2. Descargar y Vincular
+                    Descargar y Vincular
                 </button>
             </div>
 
-            <!-- Configuración Auto-sync -->
+            <!-- Auto-sync -->
             <label class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 cursor-pointer">
-                <input type="checkbox" id="auto-sync-check" onchange="toggleAutoSync(this)" class="rounded border-slate-300 text-teal-600 focus:ring-teal-500 h-4 w-4">
+                <input type="checkbox" id="auto-sync-check" onchange="toggleAutoSync(this)" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4">
                 <div>
                     <p class="text-xs font-bold text-slate-800">Auto-Sincronización Inteligente (Recomendado)</p>
                     <p class="text-[10px] text-slate-500">Descarga cambios al abrir la app y sube tus modificaciones al instante en segundo plano.</p>
@@ -1249,14 +1251,14 @@
             <!-- Separador -->
             <div class="relative flex py-2 items-center">
                 <div class="flex-grow border-t border-slate-100"></div>
-                <span class="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase">O comparte sin internet (Offline)</span>
+                <span class="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase">Compartir sin internet (Offline)</span>
                 <div class="flex-grow border-t border-slate-100"></div>
             </div>
 
-            <!-- Sección 3: Manual Export/Import -->
+            <!-- Manual Export/Import -->
             <div class="flex flex-col gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
                 <p class="text-[10px] text-slate-500 leading-normal">
-                    ¿No tenéis conexión a internet? Podéis exportar vuestro viaje en un código de texto Base64 cifrado para enviarlo por WhatsApp.
+                    ¿No tenéis conexión a internet? Podéis exportar vuestro viaje en un código de texto Base64 para enviarlo por WhatsApp.
                 </p>
                 <textarea id="manual-sync-text" rows="2" placeholder="El código de respaldo aparecerá aquí..." class="w-full text-[9px] font-mono p-2 rounded-lg border border-slate-200 focus:outline-none bg-white custom-scroll"></textarea>
                 <div class="grid grid-cols-2 gap-2 mt-1">
@@ -1397,7 +1399,7 @@
             { id: 1, name: "Oda Traditional Tavern", cat: "Restaurantes", loc: "Tirana", note: "Sabroso cordero asado y fërgesë dentro de una clásica vivienda otomana muy popular.", rating: 5 },
             { id: 2, name: "Mangalemi Restaurant", cat: "Restaurantes", loc: "Berat", note: "Disfruta de una cena con vistas a las ventanas iluminadas de Mangalem. El Tavë Kosi es de 10.", rating: 5 },
             { id: 3, name: "Taverna Lazaro", cat: "Restaurantes", loc: "Sarandë", note: "Marisco fresquísimo al mejor precio de la costa jónica.", rating: 4 },
-            { id: 4, name: "Radio Bar", cat: "Ocio", loc: "Tirana (Blloku)", note: "Copas increíbles en un patio cubierto lleno de radios retro y decoración comunista.", rating: 5 },
+            { id: 4, name: "Radio Bar", pre: "Ocio", loc: "Tirana (Blloku)", note: "Copas increíbles en un patio cubierto lleno de radios retro y decoración comunista.", rating: 5 },
             { id: 5, name: "La Brisa Beach Bar", cat: "Ocio", loc: "Himarë", note: "Relajante bar de playa con pufs, ideal para tomar un cóctel al atardecer.", rating: 4 },
             { id: 6, name: "Manantial Syri i Kaltër (Blue Eye)", cat: "Excursiones", loc: "Cerca de Sarandë", note: "Impresionante piscina natural turquesa profunda. Aguas heladas pero bellísimas.", rating: 5 },
             { id: 7, name: "Ferry del Lago Koman", cat: "Excursiones", loc: "Norte de Albania", note: "Navegación de 3 horas por cañones escarpados que recuerdan a fiordos noruegos.", rating: 5 },
@@ -1416,9 +1418,7 @@
             { shqip: "Gëzuar!", pron: "Guezuar!", esp: "¡Salud!" }
         ];
 
-        // URL del bucket en la nube (Usando un espacio único para evitar colisiones)
-        const SYNC_URL = 'https://kvdb.io/ShqipTourSync2026_xYz987_v2/';
-
+        // Inicializar Estado con JSONBin variables
         let state = {
             itinerary: JSON.parse(localStorage.getItem('albania_itinerary')) || defaultItinerary,
             expenses: JSON.parse(localStorage.getItem('albania_expenses')) || defaultExpenses,
@@ -1426,23 +1426,14 @@
             documents: JSON.parse(localStorage.getItem('albania_documents')) || defaultDocuments,
             towns: JSON.parse(localStorage.getItem('albania_towns')) || defaultTowns,
             places: JSON.parse(localStorage.getItem('albania_places')) || defaultPlaces,
-            syncKey: localStorage.getItem('albania_sync_key') || generateDefaultSyncKey(),
-            autoSync: JSON.parse(localStorage.getItem('albania_auto_sync')) || false
+            autoSync: JSON.parse(localStorage.getItem('albania_auto_sync')) || false,
+            jsonbinId: localStorage.getItem('albania_jsonbin_id') || '',
+            jsonbinKey: localStorage.getItem('albania_jsonbin_key') || ''
         };
 
         let activePlacesFilter = 'Todos';
 
-        // Generar un código único por defecto para sincronizar la primera vez
-        function generateDefaultSyncKey() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let code = 'SHQIP-';
-            for (let i = 0; i < 5; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return code;
-        }
-
-        // Guardar estado en localStorage
+        // Guardar estado local
         function saveState() {
             localStorage.setItem('albania_itinerary', JSON.stringify(state.itinerary));
             localStorage.setItem('albania_expenses', JSON.stringify(state.expenses));
@@ -1450,18 +1441,24 @@
             localStorage.setItem('albania_documents', JSON.stringify(state.documents));
             localStorage.setItem('albania_towns', JSON.stringify(state.towns));
             localStorage.setItem('albania_places', JSON.stringify(state.places));
-            localStorage.setItem('albania_sync_key', state.syncKey);
             localStorage.setItem('albania_auto_sync', JSON.stringify(state.autoSync));
+            localStorage.setItem('albania_jsonbin_id', state.jsonbinId);
+            localStorage.setItem('albania_jsonbin_key', state.jsonbinKey);
             
             updateAllViews();
 
-            // Sincronización automática silenciosa si está activada
             if (state.autoSync) {
                 uploadToCloudSilent();
             }
         }
 
-        // Cambio de pestañas principales fluido
+        function updateJsonBinCredentials() {
+            state.jsonbinId = document.getElementById('jsonbin-id-input').value.trim();
+            state.jsonbinKey = document.getElementById('jsonbin-key-input').value.trim();
+            saveState();
+            showToast("Claves de Base de Datos guardadas.");
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
             
@@ -1510,7 +1507,6 @@
             }
         }
 
-        // Sistema de Notificaciones Inteligentes (sin usar alert)
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -1542,81 +1538,56 @@
             }, 400);
         }
 
-        // APARTADO CLOUD SYNC
+        // APARTADO CLOUD SYNC: AHORA CON JSONBIN.IO (100% Sin Errores CORS)
         function openSyncModal() {
-            document.getElementById('sync-key-input').value = state.syncKey;
             document.getElementById('auto-sync-check').checked = state.autoSync;
+            document.getElementById('jsonbin-id-input').value = state.jsonbinId;
+            document.getElementById('jsonbin-key-input').value = state.jsonbinKey;
             document.getElementById('sync-modal').classList.remove('hidden');
-            exportManual(); // Generar código manual automáticamente para que esté listo
+            exportManual();
         }
 
         function closeSyncModal() {
             document.getElementById('sync-modal').classList.add('hidden');
         }
 
-        function generateNewSyncCode() {
-            const nextKey = generateDefaultSyncKey();
-            state.syncKey = nextKey;
-            document.getElementById('sync-key-input').value = nextKey;
-            saveState();
-            showToast("Nuevo código de viaje generado de forma local.");
-        }
-
-        function copySyncCode() {
-            const input = document.getElementById('sync-key-input');
-            input.select();
-            document.execCommand('copy');
-            showToast("¡Código copiado al portapapeles!");
-        }
-
         async function uploadToCloud() {
-            const key = document.getElementById('sync-key-input').value.trim().toUpperCase();
-            if (!key || key.length < 4) {
-                showToast("Por favor, introduce un código de viaje válido.", "error");
+            if (!state.jsonbinId || !state.jsonbinKey) {
+                showToast("Configura primero tu Bin ID y Master Key", "error");
                 return;
             }
-            state.syncKey = key;
             try {
-                showToast("Subiendo información del viaje a la nube...");
-                const response = await fetch(`${SYNC_URL}${key}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        itinerary: state.itinerary,
-                        expenses: state.expenses,
-                        packing: state.packing,
-                        documents: state.documents,
-                        towns: state.towns,
-                        places: state.places
-                    })
+                showToast("Subiendo información a la base de datos...");
+                
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${state.jsonbinId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': state.jsonbinKey
+                    },
+                    body: JSON.stringify(state)
                 });
-                if (response.ok) {
-                    showToast("¡Sincronizado! Vuestro viaje está guardado de forma segura.");
-                    saveState();
-                } else {
-                    showToast("Error del servidor al sincronizar.", "error");
-                }
+                
+                if (!response.ok) throw new Error("Error en la subida. Comprueba tus credenciales.");
+                
+                showToast("¡Datos sincronizados en JSONBin!");
+                saveState();
             } catch (err) {
                 console.error(err);
-                showToast("Error de conexión. Comprueba tu señal a internet.", "error");
+                showToast("Error de conexión. Revisa las claves de JSONBin.", "error");
             }
         }
 
         async function uploadToCloudSilent() {
-            const key = state.syncKey;
-            if (!key) return;
+            if (!state.jsonbinId || !state.jsonbinKey) return;
             try {
-                await fetch(`${SYNC_URL}${key}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        itinerary: state.itinerary,
-                        expenses: state.expenses,
-                        packing: state.packing,
-                        documents: state.documents,
-                        towns: state.towns,
-                        places: state.places
-                    })
+                await fetch(`https://api.jsonbin.io/v3/b/${state.jsonbinId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': state.jsonbinKey
+                    },
+                    body: JSON.stringify(state)
                 });
             } catch (err) {
                 console.warn("Silent sync failed:", err);
@@ -1624,56 +1595,67 @@
         }
 
         async function downloadFromCloud() {
-            const key = document.getElementById('sync-key-input').value.trim().toUpperCase();
-            if (!key) {
-                showToast("Introduce el código de sincronización para buscar en la nube.", "error");
+            if (!state.jsonbinId || !state.jsonbinKey) {
+                showToast("Configura primero tu Bin ID y Master Key", "error");
                 return;
             }
             try {
-                showToast("Buscando vuestro viaje en la nube...");
-                const response = await fetch(`${SYNC_URL}${key}`);
-                if (response.status === 404) {
-                    showToast("Código de viaje no encontrado en la nube. Sube los datos primero desde el otro móvil.", "error");
-                    return;
-                }
-                if (!response.ok) {
-                    throw new Error("Error en la descarga");
-                }
-                const cloudData = await response.json();
+                showToast("Descargando datos desde la nube...");
                 
-                // Actualizar estado local
-                state.itinerary = cloudData.itinerary || state.itinerary;
-                state.expenses = cloudData.expenses || state.expenses;
-                state.packing = cloudData.packing || state.packing;
-                state.documents = cloudData.documents || state.documents;
-                state.towns = cloudData.towns || state.towns;
-                state.places = cloudData.places || state.places;
-                state.syncKey = key;
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${state.jsonbinId}/latest`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Master-Key': state.jsonbinKey
+                    }
+                });
 
-                saveState();
-                updateAllViews();
-                showToast("¡Viaje descargado y sincronizado con éxito!");
-                closeSyncModal();
-            } catch (err) {
-                console.error(err);
-                showToast("Error de descarga. Inténtalo de nuevo.", "error");
-            }
-        }
-
-        async function downloadFromCloudSilent() {
-            const key = state.syncKey;
-            if (!key) return;
-            try {
-                const response = await fetch(`${SYNC_URL}${key}`);
-                if (response.ok) {
-                    const cloudData = await response.json();
+                if (!response.ok) throw new Error("Error al descargar. ¿Son correctas las claves?");
+                
+                const data = await response.json();
+                const cloudData = data.record;
+                
+                if (cloudData && Object.keys(cloudData).length > 0) {
                     state.itinerary = cloudData.itinerary || state.itinerary;
                     state.expenses = cloudData.expenses || state.expenses;
                     state.packing = cloudData.packing || state.packing;
                     state.documents = cloudData.documents || state.documents;
                     state.towns = cloudData.towns || state.towns;
                     state.places = cloudData.places || state.places;
+                    
                     saveState();
+                    updateAllViews();
+                    showToast("¡Sincronizado! Datos importados con éxito.");
+                    closeSyncModal();
+                } else {
+                    showToast("No se encontraron datos guardados en la nube.", "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error al descargar datos de JSONBin.", "error");
+            }
+        }
+
+        async function downloadFromCloudSilent() {
+            if (!state.jsonbinId || !state.jsonbinKey) return;
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${state.jsonbinId}/latest`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Master-Key': state.jsonbinKey
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const cloudData = data.record;
+                    if (cloudData && Object.keys(cloudData).length > 0) {
+                        state.itinerary = cloudData.itinerary || state.itinerary;
+                        state.expenses = cloudData.expenses || state.expenses;
+                        state.packing = cloudData.packing || state.packing;
+                        state.documents = cloudData.documents || state.documents;
+                        state.towns = cloudData.towns || state.towns;
+                        state.places = cloudData.places || state.places;
+                        saveState();
+                    }
                 }
             } catch (err) {
                 console.warn("Silent pull failed:", err);
@@ -1684,14 +1666,13 @@
             state.autoSync = checkbox.checked;
             saveState();
             if (state.autoSync) {
-                showToast("Auto-Sincronización activada con éxito.");
+                showToast("Sincronización en segundo plano activada.");
                 uploadToCloudSilent();
             } else {
-                showToast("Sincronización en segundo plano desactivada.");
+                showToast("Auto-Sincronización desactivada.");
             }
         }
 
-        // Respaldos Manuales sin Internet (Base64)
         function exportManual() {
             const jsonStr = JSON.stringify({
                 itinerary: state.itinerary,
@@ -1701,7 +1682,6 @@
                 towns: state.towns,
                 places: state.places
             });
-            // Codificar en Base64 para evitar caracteres rotos al enviar por chats
             const base64Str = btoa(unescape(encodeURIComponent(jsonStr)));
             document.getElementById('manual-sync-text').value = base64Str;
         }
@@ -1709,7 +1689,7 @@
         function importManual() {
             const base64Str = document.getElementById('manual-sync-text').value.trim();
             if (!base64Str) {
-                showToast("Por favor, introduce el código Base64 para importar.", "error");
+                showToast("Introduce el código manual.", "error");
                 return;
             }
             try {
@@ -1725,10 +1705,10 @@
                 
                 saveState();
                 updateAllViews();
-                showToast("¡Viaje importado de forma manual con éxito!");
+                showToast("¡Viaje importado de forma manual!");
                 closeSyncModal();
             } catch (err) {
-                showToast("El código manual no es válido o está incompleto.", "error");
+                showToast("El código no es válido.", "error");
             }
         }
 
@@ -1827,11 +1807,10 @@
             });
         }
 
-        // Conversor de Divisas Dinámico
         function convertDivisa(from) {
             const eurInput = document.getElementById('conv-eur');
             const allInput = document.getElementById('conv-all');
-            const rate = 95.45; // Tasa oficial actualizada de EUR a ALL
+            const rate = 95.45;
 
             if (from === 'eur') {
                 const val = parseFloat(eurInput.value);
@@ -1850,7 +1829,6 @@
             }
         }
 
-        // Gestión de Itinerario (EDICIÓN COMPLETA)
         function openAddDayModal() {
             document.getElementById('add-day-modal').classList.remove('hidden');
         }
@@ -1876,13 +1854,13 @@
             state.itinerary.push({
                 id: nextId,
                 title,
-                activities: activities || "Sin actividades registradas.",
+                activities: activities || "Sin actividades.",
                 hotel: hotel || "Por determinar"
             });
 
             saveState();
             closeAddDayModal();
-            showToast("¡Día añadido al itinerario!");
+            showToast("¡Día añadido!");
         }
 
         function openEditDayModal(id) {
@@ -1908,7 +1886,7 @@
             const hotel = document.getElementById('edit-day-hotel').value.trim();
 
             if (!title || !activities) {
-                showToast("Por favor, completa los campos obligatorios.", "error");
+                showToast("Por favor, completa los campos.", "error");
                 return;
             }
 
@@ -1922,17 +1900,16 @@
                 };
                 saveState();
                 closeEditDayModal();
-                showToast("¡Día de itinerario actualizado con éxito!");
+                showToast("Itinerario actualizado.");
             }
         }
 
         function deleteDay(id) {
             state.itinerary = state.itinerary.filter(d => d.id !== id);
             saveState();
-            showToast("Día de itinerario eliminado.", "error");
+            showToast("Día eliminado.", "error");
         }
 
-        // Gestión de Gastos (EDICIÓN COMPLETA)
         function addExpense(e) {
             e.preventDefault();
             const desc = document.getElementById('expense-desc').value.trim();
@@ -1940,7 +1917,7 @@
             const category = document.getElementById('expense-category').value;
 
             if (!desc || isNaN(amount) || amount <= 0) {
-                showToast("Por favor, rellena los campos correctamente.", "error");
+                showToast("Rellena los campos correctamente.", "error");
                 return;
             }
 
@@ -1950,7 +1927,7 @@
             saveState();
             document.getElementById('expense-desc').value = '';
             document.getElementById('expense-amount').value = '';
-            showToast("Gasto añadido correctamente.");
+            showToast("Gasto guardado.");
         }
 
         function openEditExpenseModal(id) {
@@ -1976,7 +1953,7 @@
             const category = document.getElementById('edit-expense-category').value;
 
             if (!desc || isNaN(amount) || amount <= 0) {
-                showToast("Por favor, completa los campos correctamente.", "error");
+                showToast("Por favor, completa los campos.", "error");
                 return;
             }
 
@@ -2000,7 +1977,6 @@
             showToast("Gasto eliminado.", "error");
         }
 
-        // Gestión de Equipaje (EDICIÓN COMPLETA)
         function addPackingItem() {
             const input = document.getElementById('new-packing-item');
             const text = input.value.trim();
@@ -2011,7 +1987,7 @@
             
             input.value = '';
             saveState();
-            showToast("Artículo añadido a equipaje.");
+            showToast("Añadido a equipaje.");
         }
 
         function openEditPackingModal(id) {
@@ -2035,7 +2011,7 @@
             const cat = document.getElementById('edit-packing-cat').value;
 
             if (!text) {
-                showToast("Introduce el nombre del artículo.", "error");
+                showToast("Introduce el nombre.", "error");
                 return;
             }
 
@@ -2063,16 +2039,15 @@
         function deletePackingItem(id) {
             state.packing = state.packing.filter(i => i.id !== id);
             saveState();
-            showToast("Artículo eliminado de equipaje.", "error");
+            showToast("Mochila actualizada.", "error");
         }
 
-        // Gestión de Pueblos y Lugares recomendados
         function toggleTownVisited(id) {
             const town = state.towns.find(t => t.id === id);
             if (town) {
                 town.visited = !town.visited;
                 saveState();
-                showToast(town.visited ? `🎉 ¡Habéis visitado ${town.name}!` : `📍 ${town.name} añadido a pendientes.`);
+                showToast(town.visited ? `🎉 ¡Has visitado ${town.name}!` : `📍 Pendiente de visitar.`);
             }
         }
 
@@ -2085,7 +2060,7 @@
             const rawPlaces = document.getElementById('add-town-places').value.trim();
 
             if (!name || !desc) {
-                showToast("Por favor, introduce el nombre y descripción del pueblo.", "error");
+                showToast("Introduce nombre y descripción.", "error");
                 return;
             }
 
@@ -2112,13 +2087,13 @@
             document.getElementById('add-town-image').value = '';
             document.getElementById('add-town-places').value = '';
 
-            showToast(`🏡 ¡Pueblo añadido: ${name}!`);
+            showToast(`🏡 ¡Pueblo añadido!`);
         }
 
         function deleteTown(id) {
             state.towns = state.towns.filter(t => t.id !== id);
             saveState();
-            showToast("Pueblo eliminado del explorador.", "error");
+            showToast("Pueblo eliminado.", "error");
         }
 
         function openEditTownModal(id) {
@@ -2148,7 +2123,7 @@
             const rawPlaces = document.getElementById('edit-town-places').value.trim();
 
             if (!name || !desc) {
-                showToast("Por favor, introduce el nombre y descripción del pueblo.", "error");
+                showToast("Introduce nombre y descripción.", "error");
                 return;
             }
 
@@ -2168,7 +2143,7 @@
                 };
                 saveState();
                 closeEditTownModal();
-                showToast(`🏡 ¡Pueblo "${name}" actualizado!`);
+                showToast(`🏡 Pueblo "${name}" actualizado!`);
             }
         }
 
@@ -2181,7 +2156,7 @@
                 container.innerHTML = `
                     <div class="col-span-full text-center py-10 bg-white border border-slate-100 rounded-2xl">
                         <i class="fa-regular fa-folder-open text-3xl text-slate-300 mb-2 block"></i>
-                        <p class="text-xs text-slate-400">Aún no hay pueblos guardados en la guía. ¡Añade vuestro primer pueblo!</p>
+                        <p class="text-xs text-slate-400">Aún no hay pueblos guardados en la guía.</p>
                     </div>
                 `;
                 return;
@@ -2198,7 +2173,7 @@
                         `;
                     });
                 } else {
-                    placesHTML = `<span class="text-[10px] text-slate-400 italic">No hay monumentos listados</span>`;
+                    placesHTML = `<span class="text-[10px] text-slate-400 italic">No hay monumentos</span>`;
                 }
 
                 const imageUrl = t.image && t.image.trim() !== '' 
@@ -2300,7 +2275,7 @@
                 name,
                 cat,
                 loc,
-                note: note || "Sin anotaciones extras.",
+                note: note || "Sin anotaciones.",
                 rating
             });
 
@@ -2316,7 +2291,7 @@
         function deleteCustomPlace(id) {
             state.places = state.places.filter(p => p.id !== id);
             saveState();
-            showToast("Recomendación eliminada con éxito.", "error");
+            showToast("Recomendación eliminada.", "error");
         }
 
         function openEditPlaceModal(id) {
@@ -2358,7 +2333,7 @@
                     loc,
                     cat,
                     rating,
-                    note: note || "Sin anotaciones extras."
+                    note: note || "Sin anotaciones."
                 };
                 saveState();
                 closeEditPlaceModal();
@@ -2379,7 +2354,7 @@
                 container.innerHTML = `
                     <div class="col-span-full text-center py-10 bg-white border border-slate-100 rounded-2xl">
                         <i class="fa-regular fa-folder-open text-3xl text-slate-300 mb-2 block"></i>
-                        <p class="text-xs text-slate-400">Aún no hay sitios registrados en esta categoría.</p>
+                        <p class="text-xs text-slate-400">Aún no hay sitios registrados.</p>
                     </div>
                 `;
                 return;
@@ -2439,9 +2414,8 @@
             }
         }
 
-        // Sincronización general del DOM con el estado
         function updateAllViews() {
-            // 1. Dashboard de Datos
+            // Dashboard
             const totalSpent = state.expenses.reduce((sum, curr) => sum + curr.amount, 0);
             document.getElementById('dash-spent').innerText = `${totalSpent.toFixed(2)} €`;
             document.getElementById('dash-spent-lek').innerText = `~${Math.round(totalSpent * 95.45).toLocaleString('de-DE')} Leks`;
@@ -2449,13 +2423,13 @@
             const totalStops = state.itinerary.length;
             document.getElementById('dash-stops').innerText = `${totalStops} Días`;
 
-            // Progreso del Equipaje
+            // Progreso Mochila
             const totalItems = state.packing.length;
             const checkedItems = state.packing.filter(i => i.checked).length;
             const packingProgress = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
             document.getElementById('dash-packing-progress').innerText = `${packingProgress}% Listo`;
 
-            // 2. Renderizar Línea de Tiempo del Itinerario
+            // Renderizar Línea de Tiempo
             const timeline = document.getElementById('itinerary-timeline');
             if(timeline) {
                 timeline.innerHTML = '';
@@ -2491,7 +2465,7 @@
                 });
             }
 
-            // 3. Renderizar Presupuesto
+            // Gastos
             const expensesTbody = document.getElementById('expenses-tbody');
             if(expensesTbody) {
                 expensesTbody.innerHTML = '';
@@ -2530,7 +2504,7 @@
                 document.getElementById('budget-percentage').innerText = `${percent.toFixed(0)}% de 1000€`;
             }
 
-            // 4. Renderizar Equipaje por Categorías
+            // Equipaje
             const listVital = document.getElementById('packing-vital');
             const listClothing = document.getElementById('packing-clothing');
             const listExtras = document.getElementById('packing-extras');
@@ -2568,7 +2542,7 @@
                 });
             }
 
-            // 5. Rellenar campos de Documentación
+            // Documentación
             const fOutAir = document.getElementById('doc-flight-out-airline');
             if(fOutAir) {
                 document.getElementById('doc-flight-out-airline').value = state.documents.flightOutAirline || '';
@@ -2608,7 +2582,7 @@
         }
 
         window.onload = function() {
-            // Renderizar diccionario rápido
+            // Renderizar Diccionario
             const phrasesGrid = document.getElementById('phrases-grid');
             if(phrasesGrid) {
                 phrasesGrid.innerHTML = '';
@@ -2631,7 +2605,7 @@
                 });
             }
 
-            // Calcular cuenta atrás del viaje (Salida de Santander: 6 de Agosto de 2026, 21:10)
+            // Cuenta Atrás
             const targetDate = new Date("2026-08-06T21:10:00").getTime();
             const now = new Date().getTime();
             const diff = targetDate - now;
@@ -2650,72 +2624,15 @@
                 }
             }
 
-            // Realizar un silent pull inicial si la auto-sincronización está activa
+            // Pull Inicial Silencioso
             if (state.autoSync) {
                 downloadFromCloudSilent();
             }
 
-            // Vista por defecto
             switchTab('dashboard');
             switchPlacesSubTab('pueblos');
             updateAllViews();
         };
-// ==========================================
-// NUEVO SISTEMA DE SINCRONIZACIÓN GOOGLE SHEETS
-// ==========================================
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9GhzJpBWABYgrvDeCn8tIUWOzZwqi5BteA8Vjg-ovpiBOz39g39PPVzoBQKqkTmWb4A/exec"; 
-
-async function uploadToCloud() {
-    if (typeof showToast === "function") showToast("Subiendo datos a Google Sheets...", "info");
-    try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors", // Evita bloqueos de seguridad de Google
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(state)
-        });
-        if (typeof showToast === "function") showToast("¡Sincronizado en Google Sheets!", "success");
-    } catch (error) {
-        console.error(error);
-        if (typeof showToast === "function") showToast("Error al guardar en Google", "error");
-    }
-}
-
-async function downloadFromCloud() {
-    if (typeof showToast === "function") showToast("Descargando datos...", "info");
-    try {
-        const response = await fetch(GOOGLE_SCRIPT_URL);
-        const cloudState = await response.json();
-        if (cloudState && Object.keys(cloudState).length > 0) {
-            state = { ...state, ...cloudState };
-            if (typeof saveState === "function") saveState();
-            
-            // Recargamos la web para que pinte todos los datos nuevos inmediatamente
-            window.location.reload(); 
-        } else {
-            if (typeof showToast === "function") showToast("No hay datos en la nube", "warning");
-        }
-    } catch (error) {
-        console.error(error);
-        if (typeof showToast === "function") showToast("Error al descargar de Google", "error");
-    }
-}
-
-async function downloadFromCloudSilent() {
-    try {
-        const response = await fetch(GOOGLE_SCRIPT_URL);
-        const cloudState = await response.json();
-        if (cloudState && Object.keys(cloudState).length > 0) {
-            state = { ...state, ...cloudState };
-            if (typeof saveState === "function") saveState();
-            // Intenta redibujar la interfaz si existen las funciones
-            if (typeof renderAll === "function") renderAll();
-            else if (typeof updateUI === "function") updateUI();
-        }
-    } catch (e) {
-        console.log("Error en actualización silenciosa", e);
-    }
-}
     </script>
 </body>
 </html>
