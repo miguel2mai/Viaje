@@ -30,36 +30,6 @@
         }
     </script>
     <style>
-        .roulette-container {
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    border: 10px solid #334155;
-    position: relative;
-    overflow: hidden;
-    transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-    background: conic-gradient(
-        #E41E26 0deg 22.5deg, #0E7490 22.5deg 45deg,
-        #E41E26 45deg 67.5deg, #0E7490 67.5deg 90deg,
-        #E41E26 90deg 112.5deg, #0E7490 112.5deg 135deg,
-        #E41E26 135deg 157.5deg, #0E7490 157.5deg 180deg,
-        #E41E26 180deg 202.5deg, #0E7490 202.5deg 225deg,
-        #E41E26 225deg 247.5deg, #0E7490 247.5deg 270deg,
-        #E41E26 270deg 292.5deg, #0E7490 292.5deg 315deg,
-        #E41E26 315deg 337.5deg, #0E7490 337.5deg 360deg
-    );
-}
-
-.roulette-arrow {
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #f8fafc;
-    font-size: 30px;
-    z-index: 10;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -167,7 +137,6 @@
                     <i class="fa-solid fa-compass text-lg"></i> Guía y Vocabulario
                 </button>
             </div>
-            
 
             <!-- Widget del Clima de Albania Simplificado -->
             <div class="bg-gradient-to-br from-cyan-600 to-teal-700 text-white p-4 rounded-2xl shadow-sm flex flex-col justify-between h-40 relative overflow-hidden">
@@ -446,18 +415,7 @@
                                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Concepto / Descripción</label>
                                 <input type="text" id="expense-desc" required placeholder="Ej. Alquiler coche, Cena Ksamil" class="w-full text-sm bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-teal-500 focus:bg-white transition-all">
                             </div>
-<div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm mt-6 flex flex-col items-center">
-    <h3 class="text-lg font-bold text-slate-900 mb-4">¿Quién paga?</h3>
-    
-    <div class="relative">
-        <div class="roulette-arrow"><i class="fa-solid fa-caret-down"></i></div>
-        <div id="roulette-wheel" class="roulette-container"></div>
-    </div>
 
-    <button id="spin-btn" onclick="spin()" class="mt-6 w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800">
-        Girar Ruleta
-    </button>
-</div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Cantidad (€)</label>
@@ -2740,24 +2698,5 @@
             updateAllViews();
         };
     </script>
-    <script>
-    let currentRotation = 0;
-    function spin() {
-        const wheel = document.getElementById('roulette-wheel');
-        const btn = document.getElementById('spin-btn');
-        
-        // Generar giros aleatorios (mínimo 5 vueltas completas)
-        const randomDegree = Math.floor(Math.random() * 3600) + 1800;
-        currentRotation += randomDegree;
-        
-        wheel.style.transform = `rotate(${currentRotation}deg)`;
-        btn.disabled = true;
-        
-        setTimeout(() => {
-            alert("¡La suerte está echada!");
-            btn.disabled = false;
-        }, 4000);
-    }
-</script>
 </body>
 </html>
