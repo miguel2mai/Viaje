@@ -24,46 +24,46 @@
     <script>
         const plan = [
             { id: 0, day: "Día 1: Rumbo al Sur", color: "#ef4444", points: [[41.4116, 19.7188], [40.3297, 19.4678], [40.1600, 19.6400]], plan: {
-                mañana: "Recogida coche en CarQ, salida hacia Orikum.",
+                mañana: "Recogida coche en TIA.",
                 mediodía: "Parada en Orikum y ascenso al Llogara Pass.",
-                tarde: "Llegada al Blue Boutique Hotel, comida y tarde de piscina.",
-                noche: "Cena en Royal Blue o terrazas de Dhërmi."
+                tarde: "Pueblo de Dhërmi (parte alta) y check-in Blue Boutique.",
+                noche: "Cena relax en Royal Blue o terrazas de playa."
             }},
-            { id: 1, day: "Gjipe Beach", color: "#3b82f6", points: [[40.1600, 19.6400], [40.1436, 19.6702]], plan: {
-                mañana: "Caminata y relax en Gjipe Beach.",
-                mediodía: "Desplazamiento a la zona de Himarë.",
-                tarde: "Paseo por Castillo de Himarë y playa.",
+            { id: 1, day: "Día 2: Gjipe & Himarë", color: "#3b82f6", points: [[40.1600, 19.6400], [40.1333, 19.6833]], plan: {
+                mañana: "Caminata y baño en Gjipe Beach.",
+                mediodía: "Comida en restaurante bonito de la zona.",
+                tarde: "Regreso a zona de Dhërmi.",
+                noche: "Relax."
+            }},
+            { id: 2, day: "Día 3: Kayak Porto Palermo", color: "#10b981", points: [[40.1600, 19.6400], [40.0600, 19.7900], [40.1008, 19.7433]], plan: {
+                mañana: "Excursión en Kayak/SUP Castillo Ali Pasha.",
+                mediodía: "Almuerzo cerca del castillo.",
+                tarde: "Paseo por Himarë.",
                 noche: "Regreso a Dhërmi."
             }},
-            { id: 2, day: "Día 3: Exploración local", color: "#10b981", points: [[40.1600, 19.6400], [40.1550, 19.6550]], plan: {
-                mañana: "Visita a playas cercanas (Drymades/Palasë).",
-                mediodía: "Relax total en playa privada del hotel.",
-                tarde: "Tiempo de calidad en las instalaciones.",
-                noche: "Cena tradicional en Dhërmi pueblo."
+            { id: 3, day: "Día 4: Excursión a Corfú", color: "#f59e0b", points: [[40.1600, 19.6400], [39.8731, 20.0033], [39.6243, 19.9217]], plan: {
+                mañana: "Ferry desde Saranda.",
+                mediodía: "Casco histórico y fortalezas venecianas.",
+                tarde: "Compras, café y ferry de regreso.",
+                noche: "Regreso a Albania."
             }},
-            { id: 3, day: "Día 4: Corfú", color: "#f59e0b", points: [[40.1600, 19.6400], [39.8731, 20.0033], [39.6243, 19.9217]], plan: {
-                mañana: "Conducción a Saranda, ferry 10:00.",
-                mediodía: "Llegada Corfú, inicio excursión 13:00.",
-                tarde: "Tour guiado y tiempo libre.",
-                noche: "Regreso ferri 19:45, vuelta en coche."
+            { id: 4, day: "Día 5: Islas de Vlorë", color: "#8b5cf6", points: [[40.1600, 19.6400], [40.4000, 19.4000]], plan: {
+                mañana: "Excursión en barco a las islas de Vlorë.",
+                mediodía: "Comida marina en Vlorë.",
+                tarde: "Regreso a Dhërmi.",
+                noche: "Descanso en hotel."
             }},
-            { id: 4, day: "Día 5: Orikum & Relax", color: "#8b5cf6", points: [[40.1600, 19.6400], [40.3297, 19.4678]], plan: {
-                mañana: "Mañana de relax absoluto en el hotel.",
-                mediodía: "Excursión a zona Orikum/Bahía.",
-                tarde: "Tarde de relax y playa en Dhërmi.",
-                noche: "Cena tranquila."
-            }},
-            { id: 5, day: "Día 6: Regreso a Tirana", color: "#ec4899", points: [[40.1600, 19.6400], [41.3325, 19.8242]], plan: {
+            { id: 5, day: "Día 6: Regreso a Tirana", color: "#ec4899", points: [[40.1600, 19.6400], [40.7000, 19.9500], [41.3325, 19.8242]], plan: {
                 mañana: "Salida hacia Tirana.",
-                mediodía: "Check-in Mondial Hotel, piscina.",
-                tarde: "Bunk'Art 2 y Plaza Skanderbeg.",
-                noche: "Cena en Blloku."
+                mediodía: "Parada técnica en Berat.",
+                tarde: "Check-in Mondial Hotel, piscina.",
+                noche: "Paseo y cena en Blloku."
             }},
-            { id: 6, day: "Día 7: Despedida", color: "#64748b", points: [[41.3325, 19.8242], [41.4116, 19.7188]], plan: {
+            { id: 6, day: "Día 7: Despedida Cultural", color: "#64748b", points: [[41.3325, 19.8242], [41.4116, 19.7188]], plan: {
                 mañana: "Free Tour Tirana.",
-                mediodía: "Últimas compras y comida.",
-                tarde: "Traslado a aeropuerto 17:25.",
-                noche: "Vuelo de regreso."
+                mediodía: "Compras finales, comida y traslado aeropuerto.",
+                tarde: "Salida vuelo 17:25.",
+                noche: "Viaje de regreso."
             }}
         ];
 
@@ -97,7 +97,6 @@
             panel.classList.toggle('hidden');
             icon.innerText = panel.classList.contains('hidden') ? '▼' : '▲';
             
-            // Map Logic
             routeLayer.clearLayers();
             const day = plan[id];
             L.polyline(day.points, { color: day.color, weight: 6, opacity: 0.8 }).addTo(routeLayer);
