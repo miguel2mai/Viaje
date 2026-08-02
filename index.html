@@ -4,103 +4,391 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Albania 2026 | Miguel & Marina</title>
+    <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        #map { height: 100vh; }
-        .day-panel { transition: all 0.3s ease; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Inter', sans-serif; }
+        #map { height: 100vh; z-index: 10; }
+        .day-panel { transition: max-height 0.3s ease-out, padding 0.3s ease; }
+        
+        /* Custom scrollbar for sidebar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .tab-btn.active {
+            border-bottom-color: #2563eb;
+            color: #2563eb;
+            font-weight: 700;
+        }
     </style>
 </head>
-<body class="flex flex-col md:flex-row h-screen overflow-hidden">
-    <aside class="w-full md:w-1/3 h-screen overflow-y-auto bg-slate-50 border-r border-slate-200 p-6 z-20 shadow-lg">
-        <h1 class="text-3xl font-bold text-slate-800 mb-2">Albania 2026</h1>
-        <p class="text-slate-500 mb-6 italic">Miguel & Marina | 7-13 Agosto</p>
-        <div id="itinerary" class="space-y-3"></div>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden bg-slate-100">
+    
+    <aside class="w-full md:w-1/3 lg:w-1/4 h-[50vh] md:h-screen overflow-y-auto bg-white border-r border-slate-200 p-5 z-20 shadow-[4px_0_24px_rgba(0,0,0,0.05)] flex flex-col relative">
+        <div class="sticky top-0 bg-white z-10 pb-2 border-b border-slate-100 mb-3">
+            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Albania 2026</h1>
+            <div class="flex items-center justify-between text-xs text-slate-500 mt-1">
+                <span class="flex items-center gap-1 font-medium text-slate-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Miguel & Marina
+                </span>
+                <span class="flex items-center gap-1 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    7-13 Agosto
+                </span>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="flex border-b border-slate-200 mt-4 text-sm font-medium text-slate-500">
+                <button id="tab-itinerary-btn" onclick="switchTab('itinerary')" class="tab-btn active flex-1 py-2 text-center border-b-2 border-transparent hover:text-blue-600 transition-colors flex items-center justify-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                    Itinerario
+                </button>
+                <button id="tab-docs-btn" onclick="switchTab('docs')" class="tab-btn flex-1 py-2 text-center border-b-2 border-transparent hover:text-blue-600 transition-colors flex items-center justify-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Reservas & Docs
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tab 1: Itinerary List -->
+        <div id="tab-itinerary" class="space-y-3 flex-grow">
+            <!-- JavaScript will inject the itinerary days here -->
+        </div>
+
+        <!-- Tab 2: Reservations & Documents -->
+        <div id="tab-docs" class="hidden space-y-4 flex-grow">
+            
+            <!-- Vuelos -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-300 transition-all">
+                <div class="flex items-center gap-2 mb-2 text-blue-600 font-bold text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.7 5.2c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"></path></svg>
+                    Vuelos (Localizador: DJ6E2P)
+                </div>
+                <div class="space-y-3 text-xs text-slate-600">
+                    <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-lg">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800 block">Ida: SDR → TIA</span>
+                            <span class="bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded text-[10px]">Wizz Air W45160</span>
+                        </div>
+                        <p class="text-slate-500">Jue, 6 Ago 21:10 - Vie, 7 Ago 0:10 (3h)</p>
+                    </div>
+                    
+                    <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-lg">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800 block">Vuelta: TIA → SDR</span>
+                            <span class="bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded text-[10px]">Wizz Air W45159</span>
+                        </div>
+                        <p class="text-slate-500">Jue, 13 Ago 17:25 - 20:35 (3h 10m)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hoteles -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-300 transition-all">
+                <div class="flex items-center gap-2 mb-2 text-emerald-600 font-bold text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"></path><polyline points="10 2 10 10 14 10 14 2"></polyline></svg>
+                    Hoteles
+                </div>
+                <div class="space-y-2 text-xs text-slate-600">
+                    <div class="border border-slate-100 p-2.5 rounded-lg bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors" onclick="focusHotel(41.4116, 19.7188, 'N Hotel BY NOSHI (Aeropuerto)')">
+                        <div class="flex justify-between items-start">
+                            <span class="font-bold text-slate-800">N Hotel BY NOSHI</span>
+                            <span class="text-[10px] bg-slate-200 text-slate-800 font-bold px-1.5 py-0.5 rounded">Rinas / TIA</span>
+                        </div>
+                        <p class="text-slate-500 text-[11px] mt-0.5">6 - 7 Agosto (1 Noche)</p>
+                        <p class="text-[10px] text-blue-600 font-medium mt-1 flex items-center gap-1">📍 Toca para centrar en mapa</p>
+                    </div>
+
+                    <div class="border border-slate-100 p-2.5 rounded-lg bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors" onclick="focusHotel(40.1465, 19.6375, 'Blue Boutique Hotel (Dhërmi)')">
+                        <div class="flex justify-between items-start">
+                            <span class="font-bold text-slate-800">Blue Boutique Hotel</span>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">Dhërmi</span>
+                        </div>
+                        <p class="text-slate-500 text-[11px] mt-0.5">7 - 12 Agosto (5 Noches)</p>
+                        <p class="text-[10px] text-blue-600 font-medium mt-1 flex items-center gap-1">📍 Toca para centrar en mapa</p>
+                    </div>
+
+                    <div class="border border-slate-100 p-2.5 rounded-lg bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors" onclick="focusHotel(41.3275, 19.8187, 'Mondial Hotel (Tirana)')">
+                        <div class="flex justify-between items-start">
+                            <span class="font-bold text-slate-800">Mondial Hotel</span>
+                            <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-1.5 py-0.5 rounded">Tirana</span>
+                        </div>
+                        <p class="text-slate-500 text-[11px] mt-0.5">12 - 13 Agosto (1 Noche)</p>
+                        <p class="text-[10px] text-blue-600 font-medium mt-1 flex items-center gap-1">📍 Toca para centrar en mapa</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alquiler de coche -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-300 transition-all">
+                <div class="flex items-center gap-2 mb-2 text-amber-600 font-bold text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.0 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><path d="M9 17h6"></path><circle cx="17" cy="17" r="2"></circle></svg>
+                    Alquiler de Coche
+                </div>
+                <div class="bg-amber-50/60 border border-amber-100 p-2.5 rounded-lg text-xs space-y-1">
+                    <div class="flex justify-between font-bold text-slate-800">
+                        <span>Proveedor: CarQ</span>
+                        <span class="text-amber-700">Aeropuerto TIA</span>
+                    </div>
+                    <p class="text-slate-600 text-[11px]">Recogida y devolución directa en el Aeropuerto Internacional de Tirana.</p>
+                </div>
+            </div>
+
+            <!-- Seguro de Salud -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-300 transition-all">
+                <div class="flex items-center gap-2 mb-2 text-rose-600 font-bold text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    Seguro de Salud
+                </div>
+                <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-lg text-xs space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold text-slate-800">Intermundial</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">Confirmado</span>
+                    </div>
+                    <p class="text-slate-500 text-[11px]">Póliza de asistencia en viaje y cobertura médica internacional.</p>
+                    <a href="https://media.intermundial.com/certificates/2026/05/intermundial_es_ESC50-S26-01C1_T-555866.pdf?j=1600925&sfmc_sub=597157001&l=217_HTML&u=32595809&mid=500007954&jb=1542&utm_source=sfmc&utm_medium=email&utm_campaign=Email+Confirmaci%c3%b3n+de+Compra+TO&utm_term=CTA-Docu&utm_id=1600925&sfmc_id=597157001" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="inline-flex items-center justify-center gap-1.5 w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-1.5 px-3 rounded-lg text-xs transition-colors shadow-sm mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="12" y2="18"></line><line x1="15" y1="15" x2="12" y2="18"></line></svg>
+                        Abrir Certificado PDF
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-4 text-center text-xs text-slate-400 border-t border-slate-100 pt-3">
+            Haz clic en cada día para ver la ruta en el mapa
+        </div>
     </aside>
 
-    <main id="map" class="flex-grow"></main>
+    <main id="map" class="flex-grow w-full md:w-2/3 lg:w-3/4 relative"></main>
 
     <script>
+        // Tab switching function
+        function switchTab(tabName) {
+            const itinTab = document.getElementById('tab-itinerary');
+            const docsTab = document.getElementById('tab-docs');
+            const itinBtn = document.getElementById('tab-itinerary-btn');
+            const docsBtn = document.getElementById('tab-docs-btn');
+
+            if (tabName === 'itinerary') {
+                itinTab.classList.remove('hidden');
+                docsTab.classList.add('hidden');
+                itinBtn.classList.add('active');
+                docsBtn.classList.remove('active');
+            } else {
+                itinTab.classList.add('hidden');
+                docsTab.classList.remove('hidden');
+                docsBtn.classList.add('active');
+                itinBtn.classList.remove('active');
+            }
+        }
+
+        // Itinerary data with accurate coordinates
         const plan = [
-            { id: 0, day: "Día 1: Rumbo al Sur", color: "#ef4444", points: [[41.4116, 19.7188], [40.3297, 19.4678], [40.1600, 19.6400]], plan: {
-                mañana: "Recogida de coche en TIA y salida hacia Orikum.",
-                mediodía: "Parada en Orikum, puerto deportivo y ascenso al Llogara Pass.",
-                tarde: "Llegada al Blue Boutique Hotel, Dhërmi, piscina y relax.",
-                noche: "Cena en restaurante Royal Blue o terrazas tranquilas."
+            { id: 0, day: "Día 1: Rumbo al Sur", color: "#ef4444", points: [[41.4147, 19.7206], [40.3297, 19.4678], [40.1966, 19.5933], [40.1465, 19.6375]], plan: {
+                mañana: "Recogida de coche en TIA.",
+                mediodía: "Parada en Orikum (paseo por el puerto/bahía) y ascenso al Llogara Pass.",
+                tarde: "Parada en el pueblo de Dhërmi (parte alta) y llegada al Blue Boutique Hotel (comida y piscina).",
+                noche: "Alternativa relax: cena en Royal Blue o terrazas en Dhërmi, buscando ambiente tranquilo."
             }},
-            { id: 1, day: "Día 2: Gjipe Beach", color: "#3b82f6", points: [[40.1600, 19.6400], [40.1436, 19.6702]], plan: {
-                mañana: "Caminata y baño en Gjipe Beach.",
-                mediodía: "Comida en algún restaurante local bonito cerca.",
-                tarde: "Vuelta a la zona de Dhërmi.",
-                noche: "Relax en Dhërmi."
+            { id: 1, day: "Día 2: Gjipe Beach", color: "#3b82f6", points: [[40.1465, 19.6375], [40.1267, 19.6738], [40.1465, 19.6375]], plan: {
+                mañana: "Gjipe Beach (caminata y baño).",
+                mediodía: "Podemos comer en algún lugar bonito alrededor.",
+                tarde: "Vuelta a la zona de Dhërmi."
             }},
-            { id: 2, day: "Día 3: Kayak en Porto Palermo", color: "#10b981", points: [[40.1600, 19.6400], [40.0600, 19.7900], [40.1008, 19.7433]], plan: {
-                mañana: "Excursión de kayak alrededor del castillo de Porto Palermo.",
-                mediodía: "Visita y comida en Himarë.",
-                tarde: "Exploración de playas de Himarë.",
-                noche: "Regreso a Dhërmi."
+            { id: 2, day: "Día 3: Porto Palermo (Kayak)", color: "#10b981", points: [[40.1465, 19.6375], [40.0632, 19.7915], [40.1008, 19.7433], [40.1465, 19.6375]], plan: {
+                mañana: "Excursión en Porto Palermo (kayak alrededor del castillo de Ali Pasha).",
+                mediodía: "Comida en la zona de Porto Palermo o en ruta.",
+                tarde: "Al volver pasamos por Himarë (paseo por el puerto/castillo).",
+                noche: "Regreso al hotel."
             }},
-            { id: 3, day: "Día 4: Corfú (Grecia)", color: "#f59e0b", points: [[40.1600, 19.6400], [39.8731, 20.0033], [39.6243, 19.9217]], plan: {
-                mañana: "Ferry desde Saranda a Corfú.",
-                mediodía: "Visita guiada al casco histórico y fortalezas venecianas.",
-                tarde: "Compras, café y tiempo libre.",
-                noche: "Regreso en ferry a Saranda y vuelta a Dhërmi."
+            { id: 3, day: "Día 4: Excursión a Corfú", color: "#f59e0b", points: [[40.1465, 19.6375], [39.8731, 20.0033], [39.6243, 19.9217], [39.8731, 20.0033], [40.1465, 19.6375]], plan: {
+                mañana: "Desplazamiento a Saranda y Ferry a Corfú (Grecia).",
+                mediodía: "Visita guiada por el casco histórico y fortalezas venecianas.",
+                tarde: "Tarde de compras/café antes del regreso a Albania.",
+                noche: "Llegada a Saranda y viaje de vuelta a Dhërmi."
             }},
-            { id: 4, day: "Día 5: Vlorë", color: "#8b5cf6", points: [[40.1600, 19.6400], [40.4500, 19.4800]], plan: {
-                mañana: "Excursión a las islas de Vlorë (Sazan/Karaburun).",
-                mediodía: "Comida marinera en Vlorë.",
+            { id: 4, day: "Día 5: Vlore", color: "#8b5cf6", points: [[40.1465, 19.6375], [40.4542, 19.4819], [40.1465, 19.6375]], plan: {
+                mañana: "Excursión a las islas de Vlore (Karaburun / Sazan).",
+                mediodía: "Comida en la excursión o al volver al puerto.",
                 tarde: "Regreso a Dhërmi.",
-                noche: "Descanso en hotel."
+                noche: "Última noche de relax en la Riviera Albanesa."
             }},
-            { id: 5, day: "Día 6: Regreso a Tirana", color: "#ec4899", points: [[40.1600, 19.6400], [40.7000, 19.9500], [41.3325, 19.8242]], plan: {
-                mañana: "Salida hacia Tirana con parada técnica en Berat.",
-                mediodía: "Comida en ruta en Berat.",
-                tarde: "Check-in Mondial Hotel y piscina.",
-                noche: "Paseo por el centro y cena en el barrio de Blloku."
+            { id: 5, day: "Día 6: Regreso a Tirana (Costa)", color: "#ec4899", points: [[40.1465, 19.6375], [40.333, 19.467], [40.4542, 19.4819], [40.725, 19.557], [41.318, 19.469], [41.3275, 19.8187]], plan: {
+                mañana: "Salida hacia la capital por la ruta costera (Vlorë, Fier, Durrës).",
+                mediodía: "Continuación del trayecto o comida en ruta.",
+                tarde: "Llegada al Mondial Hotel (piscina urbana para descansar del viaje).",
+                noche: "Paseo por el centro de Tirana y cena en el barrio de Blloku."
             }},
-            { id: 6, day: "Día 7: Despedida Cultural", color: "#64748b", points: [[41.3325, 19.8242]], plan: {
-                mañana: "Free Tour por el centro de Tirana.",
-                mediodía: "Últimas compras y comida local.",
-                tarde: "Traslado al aeropuerto (vuelo 17:25).",
+            { id: 6, day: "Día 7: Despedida Cultural", color: "#64748b", points: [[41.3275, 19.8187], [41.4147, 19.7206]], plan: {
+                mañana: "Free Tour en Tirana (muy recomendado para entender la historia reciente).",
+                mediodía: "Últimas compras/café.",
+                tarde: "Salida hacia el aeropuerto. Vuelo a las 17:25.",
                 noche: "Regreso a casa."
             }}
         ];
 
-        const map = L.map('map').setView([40.5, 19.8], 9);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        // Initialize map centered roughly on Albania
+        const map = L.map('map', {
+            zoomControl: false
+        }).setView([40.5, 19.8], 8);
 
-        const routeLayer = L.layerGroup().addTo(map);
+        // Add Zoom control to top right
+        L.control.zoom({ position: 'topright' }).addTo(map);
 
-        const container = document.getElementById('itinerary');
+        // Clean map base layer (CartoDB Voyager)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Layer groups to manage lines and markers
+        const globalRouteLayer = L.layerGroup().addTo(map);
+        const activeRouteLayer = L.layerGroup().addTo(map);
+
+        // Create the global dashed line representing the whole trip
+        let allTripPoints = [];
+        plan.forEach(day => {
+            allTripPoints = allTripPoints.concat(day.points);
+        });
+
+        // Draw the global route on load
+        const globalPolyline = L.polyline(allTripPoints, {
+            color: '#64748b',
+            weight: 3,
+            opacity: 0.4,
+            dashArray: '10, 10'
+        }).addTo(globalRouteLayer);
+
+        // Fit map bounds to show the whole trip on load
+        map.fitBounds(globalPolyline.getBounds(), { padding: [40, 40] });
+
+        const container = document.getElementById('tab-itinerary');
+        
         plan.forEach(item => {
             const div = document.createElement('div');
-            div.className = "border rounded-xl bg-white overflow-hidden shadow-sm";
+            div.className = "bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden";
+            
             div.innerHTML = `
-                <div class="p-4 cursor-pointer hover:bg-slate-50 flex justify-between items-center" onclick="toggleDay(${item.id})">
-                    <h3 class="font-bold text-lg" style="color:${item.color}">${item.day}</h3>
-                    <span id="icon-${item.id}">▼</span>
+                <div class="p-4 cursor-pointer flex justify-between items-center group" onclick="toggleDay(${item.id})">
+                    <div class="flex items-center gap-3">
+                        <div class="w-4 h-4 rounded-full" style="background-color: ${item.color}; box-shadow: 0 0 0 4px ${item.color}33;"></div>
+                        <h3 class="font-bold text-slate-700 group-hover:text-slate-900 transition-colors">${item.day}</h3>
+                    </div>
+                    <svg id="icon-${item.id}" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 transition-transform duration-300"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
-                <div id="panel-${item.id}" class="hidden p-4 bg-slate-50 border-t text-sm space-y-2">
-                    <p><strong>Mañana:</strong> ${item.plan.mañana}</p>
-                    <p><strong>Mediodía:</strong> ${item.plan.mediodía}</p>
-                    <p><strong>Tarde:</strong> ${item.plan.tarde}</p>
-                    <p><strong>Noche:</strong> ${item.plan.noche}</p>
+                <div id="panel-${item.id}" class="max-h-0 overflow-hidden bg-slate-50 border-t border-slate-100 px-4 day-panel">
+                    <div class="py-4 space-y-3 text-sm text-slate-600">
+                        <div class="flex items-start gap-2">
+                            <span class="font-bold text-slate-800 w-20 flex-shrink-0">Mañana:</span>
+                            <span>${item.plan.mañana}</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="font-bold text-slate-800 w-20 flex-shrink-0">Mediodía:</span>
+                            <span>${item.plan.mediodía}</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="font-bold text-slate-800 w-20 flex-shrink-0">Tarde:</span>
+                            <span>${item.plan.tarde}</span>
+                        </div>
+                        ${item.plan.noche ? `
+                        <div class="flex items-start gap-2">
+                            <span class="font-bold text-slate-800 w-20 flex-shrink-0">Noche:</span>
+                            <span>${item.plan.noche}</span>
+                        </div>
+                        ` : ''}
+                    </div>
                 </div>
             `;
             container.appendChild(div);
         });
 
+        let currentlyOpenId = null;
+
         function toggleDay(id) {
             const panel = document.getElementById(`panel-${id}`);
             const icon = document.getElementById(`icon-${id}`);
-            panel.classList.toggle('hidden');
-            icon.innerText = panel.classList.contains('hidden') ? '▼' : '▲';
             
-            routeLayer.clearLayers();
-            const day = plan[id];
-            L.polyline(day.points, { color: day.color, weight: 6, opacity: 0.8 }).addTo(routeLayer);
-            map.fitBounds(day.points, { padding: [50, 50] });
+            if (currentlyOpenId !== null && currentlyOpenId !== id) {
+                const openPanel = document.getElementById(`panel-${currentlyOpenId}`);
+                const openIcon = document.getElementById(`icon-${currentlyOpenId}`);
+                openPanel.style.maxHeight = '0px';
+                openIcon.style.transform = 'rotate(0deg)';
+            }
+
+            const isOpen = panel.style.maxHeight !== '0px' && panel.style.maxHeight !== '';
+            
+            if (isOpen) {
+                panel.style.maxHeight = '0px';
+                icon.style.transform = 'rotate(0deg)';
+                currentlyOpenId = null;
+                
+                activeRouteLayer.clearLayers();
+                map.flyToBounds(globalPolyline.getBounds(), { padding: [40, 40], duration: 1.5 });
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+                icon.style.transform = 'rotate(180deg)';
+                currentlyOpenId = id;
+                
+                activeRouteLayer.clearLayers();
+                const day = plan[id];
+                
+                const activeLine = L.polyline(day.points, { 
+                    color: day.color, 
+                    weight: 6, 
+                    opacity: 0.9,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                }).addTo(activeRouteLayer);
+
+                if(day.points.length > 0) {
+                   const startPoint = day.points[0];
+                   const endPoint = day.points[day.points.length - 1];
+                   
+                   L.circleMarker(startPoint, {radius: 6, fillColor: day.color, color: "#fff", weight: 2, fillOpacity: 1}).addTo(activeRouteLayer);
+                   L.circleMarker(endPoint, {radius: 6, fillColor: day.color, color: "#fff", weight: 2, fillOpacity: 1}).addTo(activeRouteLayer);
+                }
+
+                map.flyToBounds(activeLine.getBounds(), { padding: [50, 50], duration: 1.5, maxZoom: 11 });
+                
+                if (window.innerWidth < 768) {
+                    setTimeout(() => {
+                        window.scrollTo({ top: document.querySelector('aside').offsetHeight, behavior: 'smooth' });
+                    }, 300);
+                }
+            }
+        }
+
+        // Helper function to focus hotels on map
+        function focusHotel(lat, lng, name) {
+            activeRouteLayer.clearLayers();
+            const marker = L.circleMarker([lat, lng], {
+                radius: 10,
+                fillColor: '#2563eb',
+                color: '#ffffff',
+                weight: 3,
+                fillOpacity: 1
+            }).addTo(activeRouteLayer);
+            
+            marker.bindPopup(`<b>${name}</b>`).openPopup();
+            map.flyTo([lat, lng], 13, { duration: 1.5 });
+
+            if (window.innerWidth < 768) {
+                setTimeout(() => {
+                    window.scrollTo({ top: document.querySelector('aside').offsetHeight, behavior: 'smooth' });
+                }, 300);
+            }
         }
     </script>
 </body>
